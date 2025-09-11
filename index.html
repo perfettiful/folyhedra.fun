@@ -713,23 +713,13 @@ function tetraGroupFromMask(mask, edgeStyle='solid'){
     g.add(s);
   }
   
-  // Rotate tetrahedron so one face lies flat on the XZ plane with point facing UP
-  // Use vertex 0 as the top point, and face made of vertices 1,2,3 as the base
-  // Calculate rotation to make face normal point DOWN so face sits on ground
-  const v1 = V[1], v2 = V[2], v3 = V[3];
-  const edge1 = new THREE.Vector3().subVectors(v2, v1);
-  const edge2 = new THREE.Vector3().subVectors(v3, v1);
-  const faceNormal = new THREE.Vector3().crossVectors(edge1, edge2).normalize();
-  
-  // We want this face normal to point DOWN (-Y) so the face sits on the ground
-  // and vertex 0 (the opposite point) faces UP like a pyramid
-  const targetNormal = new THREE.Vector3(0, -1, 0);
-  const rotationAxis = new THREE.Vector3().crossVectors(faceNormal, targetNormal).normalize();
-  const rotationAngle = Math.acos(Math.max(-1, Math.min(1, faceNormal.dot(targetNormal))));
-  
-  if (rotationAxis.length() > 0.001) { // Only rotate if not already aligned
-    g.rotateOnAxis(rotationAxis, rotationAngle);
-  }
+  // Add invisible clickable area for the group
+  const clickArea = new THREE.Mesh(
+    new THREE.SphereGeometry(0.8, 8, 8),
+    new THREE.MeshBasicMaterial({ visible: false })
+  );
+  clickArea.userData.parentGroup = g;
+  g.add(clickArea);
   
   g.userData.mask = mask;
   g.userData.canonical = canonical(mask);
@@ -780,7 +770,7 @@ function rebuild(){
     const r = Math.floor(idx/cols);
     const c = idx % cols;
     g.position.copy(origin).add(new THREE.Vector3(c*spacing, 0.0, r*spacing));
-    g.position.y = 0.3; // sit properly above platform
+    g.position.y = -0.8; // sit on platform surface at -0.9
     g.userData.idx = idx;
     g.userData.label = labelFor(g.userData);
     groupRoot.add(g);
@@ -859,7 +849,7 @@ function initializeDragControls() {
     controls.enabled = true;
     // constrain Y to hover above table
     const obj = e.object;
-    obj.position.y = Math.max(obj.position.y, 0.3);
+    obj.position.y = Math.max(obj.position.y, -0.8);
   });
 }
 

@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  overflow: hidden;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+.control-panel {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  background: rgba(20, 20, 24, 0.9);
+  color: #eaeaea;
+  padding: 10px 12px;
+  border-radius: 10px;
+  display: grid;
+  gap: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.control-panel label {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.control-panel select,
+.control-panel input[type="checkbox"] {
+  margin-top: 4px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-panel {
+  position: fixed;
+  right: 12px;
+  top: 12px;
+  z-index: 10;
+  width: 320px;
+  max-width: 45vw;
+  background: rgba(20, 20, 24, 0.9);
+  color: #eaeaea;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.info-panel h2 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.info-panel .kv {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rating {
+  display: inline-flex;
+  gap: 2px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.star {
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+}
+
+.star.on {
+  color: #ffd34d;
+  text-shadow: 0 0 6px rgba(255, 211, 77, 0.5);
+}
+
+.controls-info {
+  margin-top: 10px;
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.controls-info a {
+  color: #9bd;
+}
+
+.hint {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  color: #ddd;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
