@@ -66,24 +66,20 @@
   <div>
     <label>Background:</label><br/>
     <select id="background">
-      <option value="gray-gradient" selected>Gray Gradient</option>
-      <option value="white">White</option>
-      <option value="black">Black</option>
-      <option value="blue">Blue</option>
-      <option value="green">Green</option>
-      <option value="purple">Purple</option>
-      <option value="night-sky">Night Sky</option>
+      <option value="night-sky" selected>Night Sky</option>
       <option value="meadow">Meadow</option>
       <option value="beach">Beach</option>
       <option value="forest">Forest</option>
       <option value="sunset">Sunset</option>
       <option value="ocean">Ocean</option>
+      <option value="90s-theme">90s Radical</option>
+      <option value="gray-gradient">Gray Gradient</option>
+      <option value="white">White</option>
+      <option value="black">Black</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+      <option value="purple">Purple</option>
     </select>
-  </div>
-  <div>
-    <label>Platform height:</label><br/>
-    <input type="range" id="platformHeight" min="-1" max="1" step="0.05" value="-0.8" style="width: 100%;"/>
-    <div style="font-size: 10px; opacity: 0.8; margin-top: 2px;" id="platformValue">-0.1</div>
   </div>
 </div>
 
@@ -127,8 +123,6 @@ const filterSel = document.getElementById('filter');
 const uniqChk = document.getElementById('uniq');
 const styleSel = document.getElementById('style');
 const backgroundSel = document.getElementById('background');
-const platformHeightSlider = document.getElementById('platformHeight');
-const platformValueDisplay = document.getElementById('platformValue');
 const panelTitle = document.getElementById('title');
 const panelInfo = document.getElementById('info');
 const ratingEl = document.getElementById('rating');
@@ -382,6 +376,54 @@ function createOceanBackground() {
   return new THREE.CanvasTexture(canvas);
 }
 
+function create90sThemeBackground() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+  
+  // Subtle 90s gradient background
+  const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+  gradient.addColorStop(0, '#8B4B9C'); // Muted purple
+  gradient.addColorStop(0.25, '#5B8BA3'); // Muted teal
+  gradient.addColorStop(0.5, '#7BA35B'); // Muted green
+  gradient.addColorStop(0.75, '#A3855B'); // Muted orange
+  gradient.addColorStop(1, '#A35B7B'); // Muted pink
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 1024, 1024);
+  
+  // Add subtle geometric shapes
+  const shapes = ['triangle', 'square', 'circle'];
+  const colors = ['rgba(255,255,255,0.1)', 'rgba(0,0,0,0.05)', 'rgba(200,200,255,0.08)', 'rgba(255,200,200,0.08)'];
+  
+  for (let i = 0; i < 25; i++) {
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const x = Math.random() * 1024;
+    const y = Math.random() * 1024;
+    const size = 30 + Math.random() * 80;
+    
+    ctx.fillStyle = color;
+    
+    if (shape === 'triangle') {
+      ctx.beginPath();
+      ctx.moveTo(x, y - size/2);
+      ctx.lineTo(x - size/2, y + size/2);
+      ctx.lineTo(x + size/2, y + size/2);
+      ctx.closePath();
+      ctx.fill();
+    } else if (shape === 'square') {
+      ctx.fillRect(x - size/2, y - size/2, size, size);
+    } else if (shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(x, y, size/2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  return applyTextureSettings(new THREE.CanvasTexture(canvas));
+}
+
 function setBackground(type) {
   let background;
   
@@ -419,6 +461,9 @@ function setBackground(type) {
     case 'ocean':
       background = createOceanBackground();
       break;
+    case '90s-theme':
+      background = create90sThemeBackground();
+      break;
     case 'gray-gradient':
     default:
       background = createGradientBackground('#f5f5f5', '#888888');
@@ -429,16 +474,9 @@ function setBackground(type) {
 }
 
 // Set initial background
-setBackground('gray-gradient');
+setBackground('night-sky');
 
 /* ===== Platform Height Control ===== */
-function updatePlatformHeight(topSurfaceHeight) {
-  // Position table so its TOP surface is at the specified height
-  // Table height is 0.2, so center should be 0.1 below the top surface
-  table.position.y = topSurfaceHeight - 0.1;
-  grid.position.y = topSurfaceHeight + 0.01; // Grid slightly above top surface
-  platformValueDisplay.textContent = topSurfaceHeight.toFixed(2);
-}
 
 const renderer = new THREE.WebGLRenderer({ antialias:true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -468,16 +506,16 @@ scene.add(dir);
 
 /* Table */
 const table = new THREE.Mesh(
-  new THREE.BoxGeometry(20, 0.2, 12),
+  new THREE.BoxGeometry(12, 0.2, 12),
   new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.9, metalness: 0.0 })
 );
-table.position.y = -0.2; // Will be updated by updatePlatformHeight()
+table.position.y = -0.9; // Platform positioned below tetrahedra
 table.receiveShadow = true;
 scene.add(table);
 
 /* Subtle grid */
-const grid = new THREE.GridHelper(20, 20, 0x777777, 0x666666);
-grid.position.y = -0.09; // Will be updated by updatePlatformHeight()
+const grid = new THREE.GridHelper(12, 12, 0x777777, 0x666666);
+grid.position.y = -0.79; // Grid slightly above platform surface
 scene.add(grid);
 
 /* ===== Tetrahedron combinatorics =====
@@ -621,8 +659,8 @@ function generateMasks(mode, rotationUnique){
 const objects = []; // draggable
 const groupRoot = new THREE.Group(); scene.add(groupRoot);
 
-const matEdge = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.1, roughness: 0.3 });
-const matEdgeWire = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.0, roughness: 0.8, wireframe:true });
+const matEdge = new THREE.MeshStandardMaterial({ color: 0x00ff88, metalness: 0.2, roughness: 0.3 });
+const matEdgeWire = new THREE.MeshStandardMaterial({ color: 0x00ff88, metalness: 0.0, roughness: 0.8, wireframe:true });
 const matGhost = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.0, roughness: 1.0, transparent:true, opacity: 0.15 });
 
 function cylinderBetween(a, b, radius=0.05){
@@ -667,7 +705,7 @@ function tetraGroupFromMask(mask, edgeStyle='solid'){
   for (let ei=0; ei<6; ei++) if ((mask>>ei)&1){ usedV.add(E[ei][0]); usedV.add(E[ei][1]); }
   for (const vi of usedV){
     const s = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, metalness:0.1, roughness:0.35 }));
+      new THREE.MeshStandardMaterial({ color: 0x00ff88, metalness:0.1, roughness:0.35 }));
     s.position.copy(V[vi]);
     s.castShadow = true;
     // Completely disable raycasting for individual parts
@@ -884,9 +922,6 @@ styleSel.addEventListener('change', rebuild);
 backgroundSel.addEventListener('change', (e) => {
   setBackground(e.target.value);
 });
-platformHeightSlider.addEventListener('input', (e) => {
-  updatePlatformHeight(parseFloat(e.target.value));
-});
 
 /* ===== Resize & animate ===== */
 addEventListener('resize', ()=>{
@@ -905,7 +940,6 @@ function tick(){
 document.getElementById('loading').style.display = 'none';
 
 // Set initial platform height
-updatePlatformHeight(-0.8);
 
 rebuild();
 tick();
