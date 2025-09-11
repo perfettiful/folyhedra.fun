@@ -82,7 +82,7 @@
   </div>
   <div>
     <label>Platform height:</label><br/>
-    <input type="range" id="platformHeight" min="-1" max="1" step="0.05" value="-0.7" style="width: 100%;"/>
+    <input type="range" id="platformHeight" min="-1" max="1" step="0.05" value="-0.8" style="width: 100%;"/>
     <div style="font-size: 10px; opacity: 0.8; margin-top: 2px;" id="platformValue">-0.1</div>
   </div>
 </div>
@@ -742,7 +742,7 @@ function rebuild(){
     const r = Math.floor(idx/cols);
     const c = idx % cols;
     g.position.copy(origin).add(new THREE.Vector3(c*spacing, 0.0, r*spacing));
-    g.position.y = -0.1; // sit above the platform surface
+    g.position.y = 0.3; // sit properly above platform
     g.userData.idx = idx;
     g.userData.label = labelFor(g.userData);
     groupRoot.add(g);
@@ -821,7 +821,7 @@ function initializeDragControls() {
     controls.enabled = true;
     // constrain Y to hover above table
     const obj = e.object;
-    obj.position.y = Math.max(obj.position.y, -0.1);
+    obj.position.y = Math.max(obj.position.y, 0.3);
   });
 }
 
@@ -905,7 +905,7 @@ function tick(){
 document.getElementById('loading').style.display = 'none';
 
 // Set initial platform height
-updatePlatformHeight(-0.7);
+updatePlatformHeight(-0.8);
 
 rebuild();
 tick();
