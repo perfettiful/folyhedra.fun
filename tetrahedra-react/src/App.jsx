@@ -5,7 +5,7 @@ import './App.css'
 import TetrahedraScene from './components/TetrahedraScene'
 import ControlPanel from './components/ControlPanel'
 import InfoPanel from './components/InfoPanel'
-import CloseupView from './components/CloseupView'
+import AnimatedCloseupView from './components/AnimatedCloseupView'
 import CloseupInfoPanel from './components/CloseupInfoPanel'
 import BackgroundSelector from './components/BackgroundSelector'
 
@@ -19,6 +19,7 @@ function App() {
   const [tetrahedraCount, setTetrahedraCount] = useState(0)
   const [originalPosition, setOriginalPosition] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [shouldExit, setShouldExit] = useState(false)
 
   const handleSelectTetra = (tetra) => {
     setOriginalPosition(tetra.position)
@@ -28,11 +29,7 @@ function App() {
   }
 
   const handleDismissCloseup = () => {
-    // Simply dismiss immediately for now - we can add animation later
-    setIsCloseupMode(false)
-    setSelectedTetra(null)
-    setOriginalPosition(null)
-    setIsAnimating(false)
+    setShouldExit(true)
   }
 
   const handleAnimationComplete = () => {
@@ -44,6 +41,7 @@ function App() {
     setSelectedTetra(null)
     setOriginalPosition(null)
     setIsAnimating(false)
+    setShouldExit(false)
   }
 
   const handleCanvasClick = (event) => {
@@ -111,22 +109,14 @@ function App() {
               />
             </>
           ) : (
-            <>
-              <CloseupView
-                tetraData={selectedTetra}
-                edgeStyle={edgeStyle}
-                onDismiss={handleDismissCloseup}
-              />
-              <OrbitControls
-                enableDamping
-                dampingFactor={0.03}
-                minDistance={1.0}
-                maxDistance={8.0}
-                target={[0, 0, 0]}
-                enableZoom={true}
-                zoomSpeed={0.15}
-              />
-            </>
+            <AnimatedCloseupView
+              tetraData={selectedTetra}
+              edgeStyle={edgeStyle}
+              originalPosition={originalPosition}
+              onDismiss={handleActualDismiss}
+              onAnimationComplete={handleAnimationComplete}
+              shouldExit={shouldExit}
+            />
           )}
         </Canvas>
       </div>

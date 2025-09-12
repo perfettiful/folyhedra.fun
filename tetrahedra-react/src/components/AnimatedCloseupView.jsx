@@ -4,7 +4,7 @@ import { OrbitControls, TransformControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { V, E } from '../utils/tetrahedronMath'
 
-const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition, onAnimationComplete }) => {
+const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition, onAnimationComplete, shouldExit }) => {
   const groupRef = useRef()
   const { camera } = useThree()
   const [animationState, setAnimationState] = useState('entering') // 'entering', 'active', 'exiting'
@@ -24,6 +24,13 @@ const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition
       setAnimationProgress(0)
     }
   }, [animationState])
+
+  // Handle external exit trigger
+  useEffect(() => {
+    if (shouldExit && animationState === 'active') {
+      setAnimationState('exiting')
+    }
+  }, [shouldExit, animationState])
 
   // Smooth animation using useFrame
   useFrame((state, delta) => {
