@@ -108,7 +108,17 @@ const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect, isSelected }) => {
       ))}
 
       {/* Clickable area */}
-      <mesh visible={false}>
+      <mesh 
+        visible={false}
+        onPointerEnter={(e) => {
+          e.stopPropagation()
+          document.body.style.cursor = 'pointer'
+        }}
+        onPointerLeave={(e) => {
+          e.stopPropagation()
+          document.body.style.cursor = 'grab'
+        }}
+      >
         <sphereGeometry args={[0.8, 8, 8]} />
         <meshBasicMaterial />
       </mesh>

@@ -59,7 +59,10 @@ function App() {
         />
       )}
       
-      <div className="canvas-container" onClick={handleCanvasClick}>
+      <div 
+        className={`canvas-container ${isCloseupMode ? 'closeup-mode' : ''}`} 
+        onClick={handleCanvasClick}
+      >
         <Canvas
           camera={{ position: [4.5, 4.0, 7.0], fov: 50 }}
           shadows
@@ -81,6 +84,8 @@ function App() {
                 minDistance={2.0}
                 maxDistance={30.0}
                 target={[0, 0.6, 0]}
+                enableZoom={true}
+                zoomSpeed={0.3}
               />
             </>
           ) : (
@@ -96,6 +101,8 @@ function App() {
                 minDistance={1.0}
                 maxDistance={8.0}
                 target={[0, 0, 0]}
+                enableZoom={true}
+                zoomSpeed={0.2}
               />
             </>
           )}
