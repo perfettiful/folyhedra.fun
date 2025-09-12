@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import * as THREE from 'three'
 import { V, E } from '../utils/tetrahedronMath'
 
-const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect, isSelected }) => {
+const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect, visible = true }) => {
   const groupRef = useRef()
 
   const handleClick = (event) => {
@@ -63,6 +63,8 @@ const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect, isSelected }) => {
       usedVertices.add(E[ei][1])
     }
   }
+
+  if (!visible) return null
 
   return (
     <group

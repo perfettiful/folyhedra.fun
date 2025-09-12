@@ -17,15 +17,33 @@ function App() {
   const [selectedTetra, setSelectedTetra] = useState(null)
   const [isCloseupMode, setIsCloseupMode] = useState(false)
   const [tetrahedraCount, setTetrahedraCount] = useState(0)
+  const [originalPosition, setOriginalPosition] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   const handleSelectTetra = (tetra) => {
+    setOriginalPosition(tetra.position)
     setSelectedTetra(tetra)
     setIsCloseupMode(true)
+    setIsAnimating(true)
   }
 
   const handleDismissCloseup = () => {
+    // Simply dismiss immediately for now - we can add animation later
     setIsCloseupMode(false)
     setSelectedTetra(null)
+    setOriginalPosition(null)
+    setIsAnimating(false)
+  }
+
+  const handleAnimationComplete = () => {
+    setIsAnimating(false)
+  }
+
+  const handleActualDismiss = () => {
+    setIsCloseupMode(false)
+    setSelectedTetra(null)
+    setOriginalPosition(null)
+    setIsAnimating(false)
   }
 
   const handleCanvasClick = (event) => {
@@ -64,7 +82,7 @@ function App() {
         onClick={handleCanvasClick}
       >
         <Canvas
-          camera={{ position: [4.5, 4.0, 7.0], fov: 50 }}
+          camera={{ position: [8, 8, 8], fov: 45 }}
           shadows
         >
           <BackgroundSelector background={background} />
@@ -77,15 +95,19 @@ function App() {
                 edgeStyle={edgeStyle}
                 onSelectTetra={handleSelectTetra}
                 onCountUpdate={setTetrahedraCount}
+                selectedTetra={selectedTetra}
+                isCloseupMode={isCloseupMode}
               />
               <OrbitControls
                 enableDamping
                 dampingFactor={0.06}
-                minDistance={2.0}
-                maxDistance={30.0}
-                target={[0, 0.6, 0]}
+                minDistance={3.0}
+                maxDistance={50.0}
+                target={[0, -0.5, 0]}
                 enableZoom={true}
-                zoomSpeed={0.3}
+                zoomSpeed={0.5}
+                enablePan={true}
+                panSpeed={0.8}
               />
             </>
           ) : (
@@ -102,7 +124,7 @@ function App() {
                 maxDistance={8.0}
                 target={[0, 0, 0]}
                 enableZoom={true}
-                zoomSpeed={0.2}
+                zoomSpeed={0.15}
               />
             </>
           )}

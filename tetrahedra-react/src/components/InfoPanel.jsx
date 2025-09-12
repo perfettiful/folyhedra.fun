@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 const InfoPanel = ({ selectedTetra }) => {
   const [rating, setRating] = useState(0)
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   useEffect(() => {
     if (selectedTetra) {
@@ -9,6 +10,19 @@ const InfoPanel = ({ selectedTetra }) => {
       setRating(stored ? parseInt(stored, 10) : 0)
     }
   }, [selectedTetra])
+
+  // Auto-collapse after 4 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsCollapsed(true)
+    }, 4000)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
+  const toggleCollapsed = () => {
+    setIsCollapsed(!isCollapsed)
+  }
 
   const handleRating = (newRating) => {
     if (selectedTetra) {
@@ -19,8 +33,22 @@ const InfoPanel = ({ selectedTetra }) => {
 
   if (!selectedTetra) {
     return (
-      <div className="info-panel">
-        <h2>🔺 Incomplete Tetrahedra Explorer</h2>
+      <div 
+        className={`info-panel ${isCollapsed ? 'collapsed' : ''}`}
+        onClick={isCollapsed ? toggleCollapsed : undefined}
+      >
+        <div className="info-panel-header">
+          <h2>🔺 Tetrahedra Explorer</h2>
+          {!isCollapsed ? (
+            <button className="collapse-btn" onClick={toggleCollapsed}>
+              Collapse ↑
+            </button>
+          ) : (
+            <span className="expand-indicator">Click to expand ↗</span>
+          )}
+        </div>
+        
+        <div className="info-panel-content">
         
         <div className="project-section">
           <h3>What Are These?</h3>
@@ -55,6 +83,7 @@ const InfoPanel = ({ selectedTetra }) => {
             Exploring <strong>graph theory</strong> on tetrahedral topology. 
             Each structure represents a subgraph of the complete tetrahedron graph K₄.
           </div>
+        </div>
         </div>
       </div>
     )

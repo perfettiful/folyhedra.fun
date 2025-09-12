@@ -5,8 +5,47 @@ import { generateMasks, V, E, canonical, countBits, vertexDegrees, isConnected, 
 import TetrahedronGroup from './TetrahedronGroup'
 import CornerTetrahedron from './CornerTetrahedron'
 
-const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate }) => {
+const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate, selectedTetra, isCloseupMode }) => {
   const groupRef = useRef()
+  const lastInteractionTime = useRef(Date.now())
+  const rotationEnabled = useRef(false)
+  
+  // Track user interactions to delay rotation
+  React.useEffect(() => {
+    const handleUserActivity = () => {
+      lastInteractionTime.current = Date.now()
+      rotationEnabled.current = false
+    }
+
+    // Listen for mouse and keyboard activity
+    window.addEventListener('mousemove', handleUserActivity)
+    window.addEventListener('mousedown', handleUserActivity)
+    window.addEventListener('wheel', handleUserActivity)
+    window.addEventListener('keydown', handleUserActivity)
+
+    return () => {
+      window.removeEventListener('mousemove', handleUserActivity)
+      window.removeEventListener('mousedown', handleUserActivity)
+      window.removeEventListener('wheel', handleUserActivity)
+      window.removeEventListener('keydown', handleUserActivity)
+    }
+  }, [])
+  
+  // Add subtle rotation to the whole scene (only after user inactivity)
+  useFrame((state) => {
+    if (groupRef.current && !isCloseupMode) {
+      const timeSinceLastInteraction = Date.now() - lastInteractionTime.current
+      
+      // Enable rotation after 1 second of inactivity
+      if (timeSinceLastInteraction > 1000) {
+        rotationEnabled.current = true
+      }
+      
+      if (rotationEnabled.current) {
+        groupRef.current.rotation.y += 0.0002 // Very subtle baseline rotation
+      }
+    }
+  })
 
   const tetrahedra = useMemo(() => {
     const masks = generateMasks(filter, rotationUnique)
@@ -75,14 +114,20 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
       <CornerTetrahedron position={[5.5, -0.2, 5.5]} scale={0.4} />
 
       {/* Interactive Tetrahedra */}
-      {tetrahedra.map((tetra) => (
-        <TetrahedronGroup
-          key={tetra.idx}
-          tetraData={tetra}
-          edgeStyle={edgeStyle}
-          onSelect={onSelectTetra}
-        />
-      ))}
+      {tetrahedra.map((tetra) => {
+        // Hide the selected tetrahedron during closeup mode
+        const isHidden = isCloseupMode && selectedTetra && tetra.idx === selectedTetra.idx
+        
+        return (
+          <TetrahedronGroup
+            key={tetra.idx}
+            tetraData={tetra}
+            edgeStyle={edgeStyle}
+            onSelect={onSelectTetra}
+            visible={!isHidden}
+          />
+        )
+      })}
     </group>
   )
 }
