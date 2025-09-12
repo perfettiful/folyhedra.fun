@@ -20,17 +20,41 @@ const InfoPanel = ({ selectedTetra }) => {
   if (!selectedTetra) {
     return (
       <div className="info-panel">
-        <h2>Select a figure</h2>
-        <div className="kv">
-          Click a tetra to see details.
+        <h2>🔺 Incomplete Tetrahedra Explorer</h2>
+        
+        <div className="project-section">
+          <h3>What Are These?</h3>
+          <div className="kv">
+            These are <strong>skeletal structures</strong> of tetrahedra - showing only edges and vertices, 
+            not faces. Each represents a different way to connect the 4 vertices of a tetrahedron.
+          </div>
         </div>
-        <div style={{ marginTop: '8px' }}>
-          <span style={{ fontSize: '12px', opacity: 0.9 }}>Rate:</span>
-          <div className="rating"></div>
+
+        <div className="project-section">
+          <h3>How to Explore</h3>
+          <div className="kv">
+            • <strong>Click any tetrahedron</strong> for detailed 3D inspection<br/>
+            • <strong>Use filters</strong> to see different types (connected, valid, etc.)<br/>
+            • <strong>Toggle "Rotation-unique"</strong> to see canonical vs. all variants<br/>
+            • <strong>Try different backgrounds</strong> for various moods
+          </div>
         </div>
-        <div className="controls-info">
-          Controls: drag to orbit · wheel to zoom · right-drag to pan · drag a shape to move it.<br/>
-          Three.js <a href="https://threejs.org/" target="_blank" rel="noreferrer">docs</a>
+
+        <div className="project-section">
+          <h3>Camera Controls</h3>
+          <div className="kv">
+            • <strong>Drag</strong> to orbit around the scene<br/>
+            • <strong>Wheel</strong> to zoom in/out<br/>
+            • <strong>Right-drag</strong> to pan the view
+          </div>
+        </div>
+
+        <div className="project-section">
+          <h3>About the Math</h3>
+          <div className="kv">
+            Exploring <strong>graph theory</strong> on tetrahedral topology. 
+            Each structure represents a subgraph of the complete tetrahedron graph K₄.
+          </div>
         </div>
       </div>
     )

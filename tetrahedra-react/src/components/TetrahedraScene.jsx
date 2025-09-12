@@ -3,8 +3,9 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { generateMasks, V, E, canonical, countBits, vertexDegrees, isConnected, hasFullFace, labelFor, ROT_EDGE_PERMS, rotateMask } from '../utils/tetrahedronMath'
 import TetrahedronGroup from './TetrahedronGroup'
+import CornerTetrahedron from './CornerTetrahedron'
 
-const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra }) => {
+const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate }) => {
   const groupRef = useRef()
 
   const tetrahedra = useMemo(() => {
@@ -32,10 +33,17 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra }) =
 
       return {
         ...userData,
-        position: [x, -0.4, z], // Position tetrahedra higher
+        position: [x, -0.35, z], // Position ABOVE platform so they just touch it
       }
     })
   }, [filter, rotationUnique])
+
+  // Update count when tetrahedra change
+  React.useEffect(() => {
+    if (onCountUpdate) {
+      onCountUpdate(tetrahedra.length)
+    }
+  }, [tetrahedra.length, onCountUpdate])
 
   return (
     <group ref={groupRef}>
@@ -48,19 +56,25 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra }) =
         shadow-mapSize={[2048, 2048]}
       />
 
-      {/* Platform - positioned where tetrahedra bottoms should be */}
+      {/* Platform - thinner and positioned for vertex contact */}
       <mesh position={[0, -1.0, 0]} receiveShadow>
-        <boxGeometry args={[12, 0.2, 12]} />
+        <boxGeometry args={[12, 0.1, 12]} />
         <meshStandardMaterial color="#555555" roughness={0.9} metalness={0.0} />
       </mesh>
 
       {/* Grid */}
       <gridHelper
         args={[12, 12, '#777777', '#666666']}
-        position={[0, -0.89, 0]}
+        position={[0, -0.94, 0]}
       />
 
-      {/* Tetrahedra */}
+      {/* Corner Monument Tetrahedra (complete, stone-like) */}
+      <CornerTetrahedron position={[-5.5, -0.2, -5.5]} scale={0.4} />
+      <CornerTetrahedron position={[5.5, -0.2, -5.5]} scale={0.4} />
+      <CornerTetrahedron position={[-5.5, -0.2, 5.5]} scale={0.4} />
+      <CornerTetrahedron position={[5.5, -0.2, 5.5]} scale={0.4} />
+
+      {/* Interactive Tetrahedra */}
       {tetrahedra.map((tetra) => (
         <TetrahedronGroup
           key={tetra.idx}

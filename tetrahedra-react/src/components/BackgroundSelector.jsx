@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -6,32 +6,25 @@ const BackgroundSelector = ({ background }) => {
   const { scene } = useThree()
   
   const backgroundTexture = useMemo(() => {
+    // Handle solid colors first
+    if (['white', 'black', 'blue'].includes(background)) {
+      const colorMap = {
+        'white': '#ffffff',
+        'black': '#000000',
+        'blue': '#4682B4'
+      }
+      return new THREE.Color(colorMap[background])
+    }
+
+    // Create canvas for procedural backgrounds
     const canvas = document.createElement('canvas')
     canvas.width = 1024
     canvas.height = 1024
     const ctx = canvas.getContext('2d')
 
     switch (background) {
-      case 'white':
-        return new THREE.Color('#ffffff')
-      case 'black':
-        return new THREE.Color('#000000')
-      case 'blue':
-        return new THREE.Color('#4682B4')
-      case 'green':
-        return new THREE.Color('#228B22')
-      case 'purple':
-        return new THREE.Color('#8B008B')
-      
-      case 'gray-gradient':
-        const grayGradient = ctx.createLinearGradient(0, 0, 0, 1024)
-        grayGradient.addColorStop(0, '#f5f5f5')
-        grayGradient.addColorStop(1, '#888888')
-        ctx.fillStyle = grayGradient
-        ctx.fillRect(0, 0, 1024, 1024)
-        break
-
       case 'night-sky':
+        // Deep night sky with stars
         const nightGradient = ctx.createLinearGradient(0, 0, 0, 1024)
         nightGradient.addColorStop(0, '#0a0a2e')
         nightGradient.addColorStop(0.7, '#16213e')
@@ -41,10 +34,10 @@ const BackgroundSelector = ({ background }) => {
         
         // Add stars
         ctx.fillStyle = '#ffffff'
-        for (let i = 0; i < 400; i++) {
+        for (let i = 0; i < 300; i++) {
           const x = Math.random() * 1024
           const y = Math.random() * 1024
-          const size = Math.random() * 2
+          const size = Math.random() * 1.5
           ctx.beginPath()
           ctx.arc(x, y, size, 0, Math.PI * 2)
           ctx.fill()
@@ -52,97 +45,160 @@ const BackgroundSelector = ({ background }) => {
         
         // Add bright stars
         ctx.fillStyle = '#ffff88'
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 30; i++) {
           const x = Math.random() * 1024
           const y = Math.random() * 1024
-          const size = Math.random() * 3 + 1
+          const size = Math.random() * 2 + 1
           ctx.beginPath()
           ctx.arc(x, y, size, 0, Math.PI * 2)
           ctx.fill()
         }
         break
 
-      case 'meadow':
-        const skyGradient = ctx.createLinearGradient(0, 0, 0, 600)
-        skyGradient.addColorStop(0, '#87CEEB')
-        skyGradient.addColorStop(1, '#98FB98')
-        ctx.fillStyle = skyGradient
-        ctx.fillRect(0, 0, 1024, 600)
+      case 'sunset':
+        // Beautiful sunset gradient
+        const sunsetGradient = ctx.createLinearGradient(0, 0, 0, 1024)
+        sunsetGradient.addColorStop(0, '#FF4500')
+        sunsetGradient.addColorStop(0.3, '#FF6347')
+        sunsetGradient.addColorStop(0.6, '#FFD700')
+        sunsetGradient.addColorStop(0.8, '#FF69B4')
+        sunsetGradient.addColorStop(1, '#8B008B')
+        ctx.fillStyle = sunsetGradient
+        ctx.fillRect(0, 0, 1024, 1024)
         
-        const grassGradient = ctx.createLinearGradient(0, 600, 0, 1024)
-        grassGradient.addColorStop(0, '#90EE90')
-        grassGradient.addColorStop(1, '#228B22')
-        ctx.fillStyle = grassGradient
-        ctx.fillRect(0, 600, 1024, 424)
+        // Add sun
+        ctx.fillStyle = '#FFFF00'
+        ctx.beginPath()
+        ctx.arc(800, 300, 80, 0, Math.PI * 2)
+        ctx.fill()
         
-        // Flowers
-        for (let i = 0; i < 60; i++) {
-          const x = Math.random() * 1024
-          const y = 600 + Math.random() * 300
-          ctx.fillStyle = ['#FF69B4', '#FFB6C1', '#FFA500', '#FFFF00'][Math.floor(Math.random() * 4)]
+        // Sun glow
+        const sunGlow = ctx.createRadialGradient(800, 300, 80, 800, 300, 160)
+        sunGlow.addColorStop(0, 'rgba(255,255,0,0.3)')
+        sunGlow.addColorStop(1, 'rgba(255,255,0,0)')
+        ctx.fillStyle = sunGlow
+        ctx.beginPath()
+        ctx.arc(800, 300, 160, 0, Math.PI * 2)
+        ctx.fill()
+        break
+
+      case 'ocean':
+        // Deep ocean gradient
+        const oceanGradient = ctx.createLinearGradient(0, 0, 0, 1024)
+        oceanGradient.addColorStop(0, '#87CEEB')
+        oceanGradient.addColorStop(0.3, '#4682B4')
+        oceanGradient.addColorStop(0.7, '#1E90FF')
+        oceanGradient.addColorStop(1, '#000080')
+        ctx.fillStyle = oceanGradient
+        ctx.fillRect(0, 0, 1024, 1024)
+        
+        // Add wave patterns
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)'
+        ctx.lineWidth = 2
+        for (let y = 200; y < 1000; y += 60) {
           ctx.beginPath()
-          ctx.arc(x, y, Math.random() * 4 + 2, 0, Math.PI * 2)
+          ctx.moveTo(0, y)
+          for (let x = 0; x < 1024; x += 30) {
+            ctx.lineTo(x, y + Math.sin(x * 0.05 + y * 0.01) * 12)
+          }
+          ctx.stroke()
+        }
+        break
+
+      case 'space':
+        // Deep space with nebula
+        const spaceGradient = ctx.createRadialGradient(512, 512, 0, 512, 512, 700)
+        spaceGradient.addColorStop(0, '#1a0033')
+        spaceGradient.addColorStop(0.5, '#0d001a')
+        spaceGradient.addColorStop(1, '#000000')
+        ctx.fillStyle = spaceGradient
+        ctx.fillRect(0, 0, 1024, 1024)
+        
+        // Add nebula clouds
+        for (let i = 0; i < 15; i++) {
+          const x = Math.random() * 1024
+          const y = Math.random() * 1024
+          const size = 50 + Math.random() * 150
+          const nebula = ctx.createRadialGradient(x, y, 0, x, y, size)
+          nebula.addColorStop(0, 'rgba(150,50,200,0.3)')
+          nebula.addColorStop(0.5, 'rgba(100,30,150,0.1)')
+          nebula.addColorStop(1, 'rgba(50,10,100,0)')
+          ctx.fillStyle = nebula
+          ctx.beginPath()
+          ctx.arc(x, y, size, 0, Math.PI * 2)
+          ctx.fill()
+        }
+        
+        // Add stars
+        ctx.fillStyle = '#ffffff'
+        for (let i = 0; i < 500; i++) {
+          const x = Math.random() * 1024
+          const y = Math.random() * 1024
+          const size = Math.random() * 1
+          ctx.beginPath()
+          ctx.arc(x, y, size, 0, Math.PI * 2)
           ctx.fill()
         }
         break
 
-      case '90s-theme':
-        const radicalGradient = ctx.createLinearGradient(0, 0, 1024, 1024)
-        radicalGradient.addColorStop(0, '#8B4B9C')
-        radicalGradient.addColorStop(0.25, '#5B8BA3')
-        radicalGradient.addColorStop(0.5, '#7BA35B')
-        radicalGradient.addColorStop(0.75, '#A3855B')
-        radicalGradient.addColorStop(1, '#A35B7B')
-        ctx.fillStyle = radicalGradient
+      case 'aurora':
+        // Aurora borealis
+        const auroraGradient = ctx.createLinearGradient(0, 0, 0, 1024)
+        auroraGradient.addColorStop(0, '#001122')
+        auroraGradient.addColorStop(0.5, '#003344')
+        auroraGradient.addColorStop(1, '#000011')
+        ctx.fillStyle = auroraGradient
         ctx.fillRect(0, 0, 1024, 1024)
         
-        // Subtle shapes
-        const shapes = ['triangle', 'square', 'circle']
-        const colors = ['rgba(255,255,255,0.1)', 'rgba(0,0,0,0.05)', 'rgba(200,200,255,0.08)', 'rgba(255,200,200,0.08)']
-        
-        for (let i = 0; i < 25; i++) {
-          const shape = shapes[Math.floor(Math.random() * shapes.length)]
-          const color = colors[Math.floor(Math.random() * colors.length)]
-          const x = Math.random() * 1024
-          const y = Math.random() * 1024
-          const size = 30 + Math.random() * 80
+        // Add aurora waves
+        for (let i = 0; i < 8; i++) {
+          const gradient = ctx.createLinearGradient(0, 200 + i * 100, 0, 300 + i * 100)
+          gradient.addColorStop(0, `rgba(0,255,150,${0.1 + Math.random() * 0.2})`)
+          gradient.addColorStop(0.5, `rgba(100,255,200,${0.2 + Math.random() * 0.3})`)
+          gradient.addColorStop(1, `rgba(0,200,255,${0.1 + Math.random() * 0.2})`)
+          ctx.fillStyle = gradient
           
-          ctx.fillStyle = color
-          
-          if (shape === 'triangle') {
-            ctx.beginPath()
-            ctx.moveTo(x, y - size/2)
-            ctx.lineTo(x - size/2, y + size/2)
-            ctx.lineTo(x + size/2, y + size/2)
-            ctx.closePath()
-            ctx.fill()
-          } else if (shape === 'square') {
-            ctx.fillRect(x - size/2, y - size/2, size, size)
-          } else if (shape === 'circle') {
-            ctx.beginPath()
-            ctx.arc(x, y, size/2, 0, Math.PI * 2)
-            ctx.fill()
+          ctx.beginPath()
+          ctx.moveTo(0, 200 + i * 100)
+          for (let x = 0; x < 1024; x += 20) {
+            const y = 200 + i * 100 + Math.sin(x * 0.02 + i) * 30
+            ctx.lineTo(x, y)
           }
+          ctx.lineTo(1024, 300 + i * 100)
+          ctx.lineTo(0, 300 + i * 100)
+          ctx.closePath()
+          ctx.fill()
+        }
+        
+        // Add stars
+        ctx.fillStyle = '#ffffff'
+        for (let i = 0; i < 150; i++) {
+          const x = Math.random() * 1024
+          const y = Math.random() * 400
+          const size = Math.random() * 1
+          ctx.beginPath()
+          ctx.arc(x, y, size, 0, Math.PI * 2)
+          ctx.fill()
         }
         break
 
       default:
-        return new THREE.Color('#f5f5f5')
+        return new THREE.Color('#000000')
     }
 
-    if (background !== 'white' && background !== 'black' && background !== 'blue' && 
-        background !== 'green' && background !== 'purple') {
-      const texture = new THREE.CanvasTexture(canvas)
-      texture.wrapS = THREE.ClampToEdgeWrapping
-      texture.wrapT = THREE.ClampToEdgeWrapping
-      texture.magFilter = THREE.LinearFilter
-      texture.minFilter = THREE.LinearFilter
-      return texture
-    }
+    // Create and configure texture
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.wrapS = THREE.ClampToEdgeWrapping
+    texture.wrapT = THREE.ClampToEdgeWrapping
+    texture.magFilter = THREE.LinearFilter
+    texture.minFilter = THREE.LinearFilter
+    return texture
   }, [background])
 
-  React.useEffect(() => {
-    scene.background = backgroundTexture
+  useEffect(() => {
+    if (scene && backgroundTexture) {
+      scene.background = backgroundTexture
+    }
   }, [scene, backgroundTexture])
 
   return null

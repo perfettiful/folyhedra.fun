@@ -1,63 +1,13 @@
-import React, { useRef, useState } from 'react'
-import { useThree, useFrame } from '@react-three/fiber'
+import React, { useRef } from 'react'
 import * as THREE from 'three'
 import { V, E } from '../utils/tetrahedronMath'
 
-const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect }) => {
+const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect, isSelected }) => {
   const groupRef = useRef()
-  const { controls } = useThree()
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, z: 0 })
-  const [hasMovedDuringDrag, setHasMovedDuringDrag] = useState(false)
 
   const handleClick = (event) => {
-    if (!hasMovedDuringDrag) {
-      event.stopPropagation()
-      onSelect(tetraData)
-    }
-  }
-
-  const handlePointerDown = (event) => {
-    setIsDragging(true)
-    setHasMovedDuringDrag(false)
-    setDragStart({
-      x: event.point.x - tetraData.position[0],
-      z: event.point.z - tetraData.position[2]
-    })
-    // Disable camera controls during drag
-    if (controls) {
-      controls.enabled = false
-    }
     event.stopPropagation()
-  }
-
-  const handlePointerMove = (event) => {
-    if (isDragging && groupRef.current) {
-      setHasMovedDuringDrag(true)
-      const newX = event.point.x - dragStart.x
-      const newZ = event.point.z - dragStart.z
-      groupRef.current.position.set(newX, -0.4, newZ)
-      event.stopPropagation()
-    }
-  }
-
-  const handlePointerUp = (event) => {
-    setIsDragging(false)
-    // Re-enable camera controls
-    if (controls) {
-      controls.enabled = true
-    }
-    if (groupRef.current) {
-      // Update tetraData position for future reference
-      tetraData.position[0] = groupRef.current.position.x
-      tetraData.position[2] = groupRef.current.position.z
-      // Ensure it stays above the platform
-      groupRef.current.position.y = Math.max(groupRef.current.position.y, -0.4)
-    }
-    event.stopPropagation()
-    
-    // Small delay before allowing clicks again
-    setTimeout(() => setHasMovedDuringDrag(false), 100)
+    onSelect(tetraData)
   }
 
   // Materials
@@ -118,10 +68,8 @@ const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect }) => {
     <group
       ref={groupRef}
       position={tetraData.position}
+      rotation={[Math.PI, 0, 0]} // Flip so single vertex points DOWN to platform
       onClick={handleClick}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
     >
       {/* Ghost edges (full frame) */}
       {E.map(([i, j], ei) => (
@@ -159,7 +107,7 @@ const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect }) => {
         </mesh>
       ))}
 
-      {/* Invisible clickable area */}
+      {/* Clickable area */}
       <mesh visible={false}>
         <sphereGeometry args={[0.8, 8, 8]} />
         <meshBasicMaterial />

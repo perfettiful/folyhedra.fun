@@ -40,18 +40,13 @@ const ControlPanel = ({
         <label>Background:</label>
         <select value={background} onChange={(e) => setBackground(e.target.value)}>
           <option value="night-sky">Night Sky</option>
-          <option value="meadow">Meadow</option>
-          <option value="beach">Beach</option>
-          <option value="forest">Forest</option>
           <option value="sunset">Sunset</option>
           <option value="ocean">Ocean</option>
-          <option value="90s-theme">90s Radical</option>
-          <option value="gray-gradient">Gray Gradient</option>
-          <option value="white">White</option>
+          <option value="space">Deep Space</option>
+          <option value="aurora">Aurora</option>
           <option value="black">Black</option>
+          <option value="white">White</option>
           <option value="blue">Blue</option>
-          <option value="green">Green</option>
-          <option value="purple">Purple</option>
         </select>
       </div>
     </div>
