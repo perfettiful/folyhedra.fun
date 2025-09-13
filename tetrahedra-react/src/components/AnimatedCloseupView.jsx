@@ -214,16 +214,49 @@ const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition
         />
       )}
       
-      {/* Dismiss area - invisible plane for click-to-dismiss */}
+      {/* Side dismiss zones - only on the sides, not center */}
       {animationState === 'active' && (
-        <mesh
-          position={[0, 0, -2]}
-          onClick={handleDismiss}
-          visible={false}
-        >
-          <planeGeometry args={[20, 20]} />
-          <meshBasicMaterial />
-        </mesh>
+        <>
+          {/* Left dismiss zone */}
+          <mesh
+            position={[-4, 0, 0]}
+            onClick={handleDismiss}
+            visible={false}
+          >
+            <planeGeometry args={[4, 10]} />
+            <meshBasicMaterial />
+          </mesh>
+          
+          {/* Right dismiss zone */}
+          <mesh
+            position={[4, 0, 0]}
+            onClick={handleDismiss}
+            visible={false}
+          >
+            <planeGeometry args={[4, 10]} />
+            <meshBasicMaterial />
+          </mesh>
+          
+          {/* Top dismiss zone */}
+          <mesh
+            position={[0, 3, 0]}
+            onClick={handleDismiss}
+            visible={false}
+          >
+            <planeGeometry args={[6, 4]} />
+            <meshBasicMaterial />
+          </mesh>
+          
+          {/* Bottom dismiss zone */}
+          <mesh
+            position={[0, -3, 0]}
+            onClick={handleDismiss}
+            visible={false}
+          >
+            <planeGeometry args={[6, 4]} />
+            <meshBasicMaterial />
+          </mesh>
+        </>
       )}
     </>
   )
