@@ -8,6 +8,7 @@ import InfoPanel from './components/InfoPanel'
 import AnimatedCloseupView from './components/AnimatedCloseupView'
 import CloseupInfoPanel from './components/CloseupInfoPanel'
 import BackgroundSelector from './components/BackgroundSelector'
+import PolarisModal from './components/PolarisModal'
 
 function App() {
   const [filter, setFilter] = useState('connected_noface')
@@ -20,6 +21,7 @@ function App() {
   const [originalPosition, setOriginalPosition] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldExit, setShouldExit] = useState(false)
+  const [isPolarisModalOpen, setIsPolarisModalOpen] = useState(false)
 
   const handleSelectTetra = (tetra) => {
     setOriginalPosition(tetra.position)
@@ -83,7 +85,10 @@ function App() {
           camera={{ position: [8, 8, 8], fov: 45 }}
           shadows
         >
-          <BackgroundSelector background={background} />
+          <BackgroundSelector 
+            background={background} 
+            onPolarisClick={() => setIsPolarisModalOpen(true)}
+          />
           
           {!isCloseupMode ? (
             <>
@@ -147,6 +152,11 @@ function App() {
           <span>Use the rotation gizmo to examine the structure • Click X or outside to return</span>
         </div>
       )}
+      
+      <PolarisModal 
+        isOpen={isPolarisModalOpen}
+        onClose={() => setIsPolarisModalOpen(false)}
+      />
     </div>
   )
 }

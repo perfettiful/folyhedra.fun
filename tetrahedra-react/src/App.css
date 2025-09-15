@@ -441,3 +441,77 @@ html, body {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
+
+/* Polaris Modal */
+.polaris-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.polaris-modal {
+  background: rgba(10, 10, 46, 0.95);
+  border: 2px solid rgba(255, 255, 200, 0.3);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  color: #eaeaea;
+}
+
+.polaris-header {
+  padding: 20px 24px 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 200, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 200, 0.05);
+}
+
+.polaris-header h2 {
+  margin: 0;
+  color: #ffffcc;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.polaris-content {
+  padding: 20px 24px 24px 24px;
+}
+
+.polaris-section {
+  margin-bottom: 20px;
+}
+
+.polaris-section:last-child {
+  margin-bottom: 0;
+}
+
+.polaris-section h3 {
+  margin: 0 0 8px 0;
+  color: #ffffaa;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.polaris-section p {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Custom star cursor for Polaris hover */
+body.polaris-hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23FFFF00' stroke='%23000000' stroke-width='0.5' d='M10 1l2.5 5.5L18 7.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1L10 1z'/%3E%3C/svg%3E") 10 10, pointer !important;
+}

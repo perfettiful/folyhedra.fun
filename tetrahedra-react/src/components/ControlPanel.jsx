@@ -33,12 +33,10 @@ const ControlPanel = ({
         <label>🎨 Scene Background:</label>
         <select value={background} onChange={(e) => setBackground(e.target.value)}>
           <option value="night-sky">🌌 Night Sky</option>
-          <option value="sunset">🌅 Sunset</option>
           <option value="ocean">🌊 Ocean</option>
           <option value="space">🚀 Deep Space</option>
           <option value="aurora">🌠 Aurora</option>
           <option value="black">⚫ Black</option>
-          <option value="white">⚪ White</option>
           <option value="blue">🔵 Blue</option>
         </select>
       </div>

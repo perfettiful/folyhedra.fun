@@ -1,8 +1,9 @@
 import React, { useMemo, useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import ConstellationNightSky from './ConstellationNightSky'
 
-const BackgroundSelector = ({ background }) => {
+const BackgroundSelector = ({ background, onPolarisClick }) => {
   const { scene } = useThree()
   
   const backgroundTexture = useMemo(() => {
@@ -24,6 +25,10 @@ const BackgroundSelector = ({ background }) => {
 
     switch (background) {
       case 'night-sky':
+        // Use the constellation night sky component instead
+        return null
+        
+      case 'simple-night':
         // Deep night sky with stars
         const nightGradient = ctx.createLinearGradient(0, 0, 0, 1024)
         nightGradient.addColorStop(0, '#0a0a2e')
@@ -55,7 +60,7 @@ const BackgroundSelector = ({ background }) => {
         }
         break
 
-      case 'sunset':
+      case 'removed-sunset':
         // Beautiful sunset gradient
         const sunsetGradient = ctx.createLinearGradient(0, 0, 0, 1024)
         sunsetGradient.addColorStop(0, '#FF4500')
@@ -201,7 +206,13 @@ const BackgroundSelector = ({ background }) => {
     }
   }, [scene, backgroundTexture])
 
-  return null
+  return (
+    <>
+      {background === 'night-sky' && (
+        <ConstellationNightSky onPolarisClick={onPolarisClick} />
+      )}
+    </>
+  )
 }
 
 export default BackgroundSelector
