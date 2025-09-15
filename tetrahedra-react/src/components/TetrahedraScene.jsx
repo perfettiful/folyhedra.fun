@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { generateMasks, V, E, canonical, countBits, vertexDegrees, isConnected, hasFullFace, labelFor, ROT_EDGE_PERMS, rotateMask } from '../utils/tetrahedronMath'
 import TetrahedronGroup from './TetrahedronGroup'
 import CornerTetrahedron from './CornerTetrahedron'
+import ReferenceTetrahedron from './ReferenceTetrahedron'
 
 const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate, selectedTetra, isCloseupMode }) => {
   const groupRef = useRef()
@@ -112,6 +113,27 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
       <CornerTetrahedron position={[5.5, -0.2, -5.5]} scale={0.4} />
       <CornerTetrahedron position={[-5.5, -0.2, 5.5]} scale={0.4} />
       <CornerTetrahedron position={[5.5, -0.2, 5.5]} scale={0.4} />
+
+      {/* Reference Tetrahedra - Full and Empty (only for "all" filter without canonical) */}
+      {filter === 'all' && !rotationUnique && (
+        <>
+          {/* Full tetrahedron (mask 63 = all 6 edges) */}
+          <ReferenceTetrahedron
+            position={[8, -0.35, 0]}
+            mask={63} // All 6 edges: 111111 in binary
+            label="Complete K₄"
+            scale={0.8}
+          />
+          
+          {/* Empty skeleton (mask 0 = no edges, just ghost frame) */}
+          <ReferenceTetrahedron
+            position={[-8, -0.35, 0]}
+            mask={0} // No edges: 000000 in binary
+            label="Empty Frame"
+            scale={0.8}
+          />
+        </>
+      )}
 
       {/* Interactive Tetrahedra */}
       {tetrahedra.map((tetra) => {
