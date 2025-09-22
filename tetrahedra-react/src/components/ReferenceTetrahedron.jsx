@@ -39,7 +39,7 @@ const ReferenceTetrahedron = ({ position, mask, label, scale = 1.0 }) => {
           direction.clone().normalize()
         )}
         material={material}
-        castShadow
+        castShadow={false}
       >
         <cylinderGeometry args={[radius * scale, radius * scale, length * scale, 16, 1, false]} />
       </mesh>
@@ -78,13 +78,13 @@ const ReferenceTetrahedron = ({ position, mask, label, scale = 1.0 }) => {
         return null
       })}
 
-      {/* Vertex spheres */}
-      {mask > 0 && Array.from(usedVertices).map((vi) => (
+      {/* Vertex spheres - only for masks that have edges */}
+      {mask > 0 && usedVertices.size > 0 && Array.from(usedVertices).map((vi) => (
         <mesh
           key={`ref-vertex-${vi}`}
           position={V[vi].clone().multiplyScalar(scale)}
           material={refVertexMaterial}
-          castShadow
+          castShadow={false}
         >
           <sphereGeometry args={[0.06 * scale, 16, 12]} />
         </mesh>

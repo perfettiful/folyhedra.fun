@@ -9,6 +9,7 @@ import AnimatedCloseupView from './components/AnimatedCloseupView'
 import CloseupInfoPanel from './components/CloseupInfoPanel'
 import BackgroundSelector from './components/BackgroundSelector'
 import PolarisModal from './components/PolarisModal'
+import CameraController from './components/CameraController'
 
 function App() {
   const [filter, setFilter] = useState('connected_noface')
@@ -22,6 +23,7 @@ function App() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldExit, setShouldExit] = useState(false)
   const [isPolarisModalOpen, setIsPolarisModalOpen] = useState(false)
+  const [targetCameraDistance, setTargetCameraDistance] = useState(15)
 
   const handleSelectTetra = (tetra) => {
     setOriginalPosition(tetra.position)
@@ -92,6 +94,10 @@ function App() {
           
           {!isCloseupMode ? (
             <>
+              <CameraController 
+                targetDistance={targetCameraDistance}
+                isCloseupMode={isCloseupMode}
+              />
               <TetrahedraScene
                 filter={filter}
                 rotationUnique={rotationUnique}
@@ -100,12 +106,13 @@ function App() {
                 onCountUpdate={setTetrahedraCount}
                 selectedTetra={selectedTetra}
                 isCloseupMode={isCloseupMode}
+                onCameraUpdate={setTargetCameraDistance}
               />
               <OrbitControls
                 enableDamping
                 dampingFactor={0.06}
-                minDistance={3.0}
-                maxDistance={50.0}
+                minDistance={8.0}
+                maxDistance={60.0}
                 target={[0, -0.5, 0]}
                 enableZoom={true}
                 zoomSpeed={0.5}

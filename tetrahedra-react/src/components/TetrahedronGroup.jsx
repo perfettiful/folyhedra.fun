@@ -10,30 +10,39 @@ const TetrahedronGroup = ({ tetraData, edgeStyle, onSelect, visible = true }) =>
     onSelect(tetraData)
   }
 
-  // Materials
-  const edgeMaterial = new THREE.MeshStandardMaterial({ 
+  // Materials with smooth transitions
+  const edgeMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#00ff88', 
     metalness: 0.2, 
-    roughness: 0.3 
-  })
-  const edgeWireMaterial = new THREE.MeshStandardMaterial({ 
+    roughness: 0.3,
+    transparent: true,
+    opacity: 1
+  }), [])
+  
+  const edgeWireMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#00ff88', 
     metalness: 0.0, 
     roughness: 0.8, 
-    wireframe: true 
-  })
-  const ghostMaterial = new THREE.MeshStandardMaterial({ 
+    wireframe: true,
+    transparent: true,
+    opacity: 1
+  }), [])
+  
+  const ghostMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#cccccc', 
     metalness: 0.0, 
     roughness: 1.0, 
     transparent: true, 
     opacity: 0.15 
-  })
-  const vertexMaterial = new THREE.MeshStandardMaterial({ 
+  }), [])
+  
+  const vertexMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#00ff88', 
     metalness: 0.1, 
-    roughness: 0.35 
-  })
+    roughness: 0.35,
+    transparent: true,
+    opacity: 1
+  }), [])
 
   const createCylinder = (start, end, radius, material) => {
     const direction = new THREE.Vector3().subVectors(end, start)
