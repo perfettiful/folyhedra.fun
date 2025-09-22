@@ -4,7 +4,6 @@ import * as THREE from 'three'
 import { generateMasks, V, E, canonical, countBits, vertexDegrees, isConnected, hasFullFace, labelFor, ROT_EDGE_PERMS, rotateMask } from '../utils/tetrahedronMath'
 import TetrahedronGroup from './TetrahedronGroup'
 import CornerTetrahedron from './CornerTetrahedron'
-import ReferenceTetrahedron from './ReferenceTetrahedron'
 
 const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate, selectedTetra, isCloseupMode, onCameraUpdate }) => {
   const groupRef = useRef()
@@ -150,10 +149,16 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
       {/* Lights */}
       <hemisphereLight args={['#ffffff', '#666666', 0.8]} />
       <directionalLight
-        position={[5, 8, 4]}
+        position={[8, 20, 6]}
         intensity={1.2}
         castShadow
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[4096, 4096]}
+        shadow-camera-left={-30}
+        shadow-camera-right={30}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
+        shadow-camera-near={0.1}
+        shadow-camera-far={50}
       />
 
       {/* Platform - animated size based on tetrahedra count */}

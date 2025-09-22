@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import './App.css'
@@ -10,6 +10,7 @@ import CloseupInfoPanel from './components/CloseupInfoPanel'
 import BackgroundSelector from './components/BackgroundSelector'
 import PolarisModal from './components/PolarisModal'
 import CameraController from './components/CameraController'
+import InspectionToolbar from './components/InspectionToolbar'
 
 function App() {
   const [filter, setFilter] = useState('connected_noface')
@@ -24,6 +25,11 @@ function App() {
   const [shouldExit, setShouldExit] = useState(false)
   const [isPolarisModalOpen, setIsPolarisModalOpen] = useState(false)
   const [targetCameraDistance, setTargetCameraDistance] = useState(15)
+  const [inspectionControls, setInspectionControls] = useState({
+    isAutoRotating: false,
+    isWireframe: false
+  })
+  const rotationCommandRef = useRef(null)
 
   const handleSelectTetra = (tetra) => {
     setOriginalPosition(tetra.position)
@@ -73,10 +79,24 @@ function App() {
       {!isCloseupMode && <InfoPanel selectedTetra={selectedTetra} />}
       
       {isCloseupMode && (
-        <CloseupInfoPanel 
-          tetraData={selectedTetra} 
-          onDismiss={handleDismissCloseup}
-        />
+        <>
+          <CloseupInfoPanel 
+            tetraData={selectedTetra} 
+            onDismiss={handleDismissCloseup}
+          />
+          <InspectionToolbar 
+            onRotate={(direction) => {
+              rotationCommandRef.current = direction
+            }}
+            onReset={() => {
+              rotationCommandRef.current = 'reset'
+            }}
+            onToggleAutoRotate={() => setInspectionControls(prev => ({...prev, isAutoRotating: !prev.isAutoRotating}))}
+            onToggleWireframe={() => setInspectionControls(prev => ({...prev, isWireframe: !prev.isWireframe}))}
+            isAutoRotating={inspectionControls.isAutoRotating}
+            isWireframe={inspectionControls.isWireframe}
+          />
+        </>
       )}
       
       <div 
@@ -128,6 +148,8 @@ function App() {
               onDismiss={handleActualDismiss}
               onAnimationComplete={handleAnimationComplete}
               shouldExit={shouldExit}
+              inspectionControls={inspectionControls}
+              rotationCommandRef={rotationCommandRef}
             />
           )}
         </Canvas>

@@ -3,12 +3,20 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, TransformControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { V, E } from '../utils/tetrahedronMath'
+import InspectionToolbar from './InspectionToolbar'
 
-const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition, onAnimationComplete, shouldExit }) => {
+const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition, onAnimationComplete, shouldExit, inspectionControls, rotationCommandRef }) => {
   const groupRef = useRef()
   const { camera } = useThree()
   const [animationState, setAnimationState] = useState('entering') // 'entering', 'active', 'exiting'
   const [animationProgress, setAnimationProgress] = useState(0)
+  const isAutoRotating = inspectionControls?.isAutoRotating || false
+  const showWireframe = inspectionControls?.isWireframe || false
+  const autoRotationRef = useRef(0)
+  const [isRotationAnimating, setIsRotationAnimating] = useState(false)
+  const rotationStartRef = useRef({ x: 0, y: 0, z: 0 })
+  const rotationTargetRef = useRef({ x: 0, y: 0, z: 0 })
+  const rotationProgressRef = useRef(0)
   
   // Store original camera state
   const originalCameraPosition = useRef(new THREE.Vector3(8, 8, 8))
@@ -82,6 +90,91 @@ const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition
         onDismiss()
       }
     }
+    
+    // Handle rotation commands from toolbar with smooth animation
+    if (rotationCommandRef?.current && groupRef.current && animationState === 'active' && !isRotationAnimating) {
+      const command = rotationCommandRef.current
+      const rotation = Math.PI / 2 // 90 degrees
+      
+      // Store current rotation as start point
+      rotationStartRef.current = {
+        x: groupRef.current.rotation.x,
+        y: groupRef.current.rotation.y,
+        z: groupRef.current.rotation.z
+      }
+      
+      // Calculate target rotation
+      rotationTargetRef.current = { ...rotationStartRef.current }
+      
+      const rotation45 = Math.PI / 4 // 45 degrees
+      
+      switch(command) {
+        case 'up':
+          rotationTargetRef.current.x -= rotation
+          break
+        case 'down':
+          rotationTargetRef.current.x += rotation
+          break
+        case 'left':
+          rotationTargetRef.current.y -= rotation
+          break
+        case 'right':
+          rotationTargetRef.current.y += rotation
+          break
+        case 'up-right':
+          rotationTargetRef.current.x -= rotation45
+          rotationTargetRef.current.y += rotation45
+          break
+        case 'down-right':
+          rotationTargetRef.current.x += rotation45
+          rotationTargetRef.current.y += rotation45
+          break
+        case 'down-left':
+          rotationTargetRef.current.x += rotation45
+          rotationTargetRef.current.y -= rotation45
+          break
+        case 'up-left':
+          rotationTargetRef.current.x -= rotation45
+          rotationTargetRef.current.y -= rotation45
+          break
+        case 'reset':
+          rotationTargetRef.current = { x: 0, y: 0, z: 0 }
+          autoRotationRef.current = 0
+          break
+      }
+      
+      // Start smooth rotation animation
+      setIsRotationAnimating(true)
+      rotationProgressRef.current = 0
+      rotationCommandRef.current = null // Clear command
+    }
+    
+    // Smooth rotation animation
+    if (isRotationAnimating && groupRef.current) {
+      rotationProgressRef.current += delta * 2.5 // Slower animation speed
+      
+      if (rotationProgressRef.current >= 1) {
+        // Animation complete
+        groupRef.current.rotation.set(
+          rotationTargetRef.current.x,
+          rotationTargetRef.current.y,
+          rotationTargetRef.current.z
+        )
+        setIsRotationAnimating(false)
+      } else {
+        // Interpolate rotation with easing
+        const eased = 1 - Math.pow(1 - rotationProgressRef.current, 3) // Ease-out cubic
+        groupRef.current.rotation.x = THREE.MathUtils.lerp(rotationStartRef.current.x, rotationTargetRef.current.x, eased)
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(rotationStartRef.current.y, rotationTargetRef.current.y, eased)
+        groupRef.current.rotation.z = THREE.MathUtils.lerp(rotationStartRef.current.z, rotationTargetRef.current.z, eased)
+      }
+    }
+    
+    // Auto-rotation logic
+    if (isAutoRotating && animationState === 'active' && groupRef.current) {
+      autoRotationRef.current += delta * 0.5
+      groupRef.current.rotation.y = autoRotationRef.current
+    }
   })
 
   const handleDismiss = () => {
@@ -90,30 +183,72 @@ const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition
     }
   }
 
+  // Rotation control functions
+  const handleRotate = (direction) => {
+    if (groupRef.current && animationState === 'active') {
+      const rotation = Math.PI / 2 // 90 degrees
+      switch(direction) {
+        case 'up':
+          groupRef.current.rotation.x -= rotation
+          break
+        case 'down':
+          groupRef.current.rotation.x += rotation
+          break
+        case 'left':
+          groupRef.current.rotation.y -= rotation
+          break
+        case 'right':
+          groupRef.current.rotation.y += rotation
+          break
+      }
+    }
+  }
+
+  const handleReset = () => {
+    if (groupRef.current && animationState === 'active') {
+      groupRef.current.rotation.set(0, 0, 0)
+      autoRotationRef.current = 0
+    }
+  }
+
+  const handleToggleAutoRotate = () => {
+    setIsAutoRotating(!isAutoRotating)
+  }
+
+  const handleToggleWireframe = () => {
+    setShowWireframe(!showWireframe)
+  }
+
   // Materials for closeup view
-  const edgeMaterial = new THREE.MeshStandardMaterial({ 
+  const edgeMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#00ff88', 
     metalness: 0.2, 
-    roughness: 0.3 
-  })
-  const edgeWireMaterial = new THREE.MeshStandardMaterial({ 
+    roughness: 0.3,
+    wireframe: showWireframe
+  }), [showWireframe])
+  
+  const edgeWireMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#00ff88', 
     metalness: 0.0, 
     roughness: 0.8, 
     wireframe: true 
-  })
-  const ghostMaterial = new THREE.MeshStandardMaterial({ 
+  }), [])
+  
+  const ghostMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#cccccc', 
     metalness: 0.0, 
     roughness: 1.0, 
     transparent: true, 
-    opacity: 0.4 
-  })
-  const vertexMaterial = new THREE.MeshStandardMaterial({ 
+    opacity: showWireframe ? 0.1 : 0.4,
+    wireframe: showWireframe
+  }), [showWireframe])
+  
+  const vertexMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({ 
     color: '#00ff88', 
     metalness: 0.1, 
-    roughness: 0.35 
-  })
+    roughness: 0.35,
+    wireframe: showWireframe
+  }), [showWireframe])
 
   const createCylinder = (start, end, radius, material) => {
     const direction = new THREE.Vector3().subVectors(end, start)
@@ -258,6 +393,7 @@ const AnimatedCloseupView = ({ tetraData, edgeStyle, onDismiss, originalPosition
           </mesh>
         </>
       )}
+      
     </>
   )
 }
