@@ -1,10 +1,12 @@
-import React, { useMemo, useEffect, useState } from 'react'
-import { useThree } from '@react-three/fiber'
+import React, { useMemo, useEffect, useState, useRef } from 'react'
+import { useThree, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const ConstellationNightSky = ({ onPolarisClick }) => {
   const { scene } = useThree()
   const [isHoveringPolaris, setIsHoveringPolaris] = useState(false)
+  const polarisRef = useRef()
+  const twinkleTime = useRef(0)
   
   const backgroundTexture = useMemo(() => {
     const canvas = document.createElement('canvas')
@@ -110,10 +112,29 @@ const ConstellationNightSky = ({ onPolarisClick }) => {
     }
   }, [scene, backgroundTexture])
 
+  // Twinkling and rotation animation
+  useFrame((state) => {
+    twinkleTime.current += state.clock.elapsedTime * 0.001
+    
+    if (polarisRef.current) {
+      // Much slower rotation
+      polarisRef.current.rotation.z += 0.002
+      
+      // Twinkling opacity
+      const twinkle = 0.7 + Math.sin(twinkleTime.current * 4) * 0.3
+      polarisRef.current.children.forEach(child => {
+        if (child.material) {
+          child.material.opacity = isHoveringPolaris ? 1.0 : twinkle
+        }
+      })
+    }
+  })
+
   return (
     <>
-      {/* Interactive Polaris star - positioned in 3D space */}
-      <mesh
+      {/* Twinkling 4-Point Star Polaris */}
+      <group 
+        ref={polarisRef}
         position={[0, 20, -25]}
         onClick={(e) => {
           e.stopPropagation()
@@ -130,20 +151,74 @@ const ConstellationNightSky = ({ onPolarisClick }) => {
           document.body.classList.remove('polaris-hover')
         }}
       >
-        <sphereGeometry args={[isHoveringPolaris ? 0.3 : 0.2, 16, 12]} />
-        <meshBasicMaterial 
-          color={isHoveringPolaris ? '#ffffaa' : '#ffffcc'} 
-          transparent
-          opacity={isHoveringPolaris ? 1.0 : 0.8}
-        />
-        {isHoveringPolaris && (
-          <pointLight
-            intensity={2}
-            distance={10}
-            color="#ffffaa"
+        {/* 4-pointed star using properly oriented cones */}
+        {/* Top point */}
+        <mesh position={[0, 0.3, 0]} rotation={[0, 0, 0]}>
+          <coneGeometry args={[0.08, 0.6, 6]} />
+          <meshBasicMaterial 
+            color="#ffffcc" 
+            transparent 
+            opacity={0.9}
           />
-        )}
-      </mesh>
+        </mesh>
+        
+        {/* Bottom point */}
+        <mesh position={[0, -0.3, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[0.08, 0.6, 6]} />
+          <meshBasicMaterial 
+            color="#ffffcc" 
+            transparent 
+            opacity={0.9}
+          />
+        </mesh>
+        
+        {/* Left point */}
+        <mesh position={[-0.3, 0, 0]} rotation={[0, 0, Math.PI/2]}>
+          <coneGeometry args={[0.08, 0.6, 6]} />
+          <meshBasicMaterial 
+            color="#ffffcc" 
+            transparent 
+            opacity={0.9}
+          />
+        </mesh>
+        
+        {/* Right point */}
+        <mesh position={[0.3, 0, 0]} rotation={[0, 0, -Math.PI/2]}>
+          <coneGeometry args={[0.08, 0.6, 6]} />
+          <meshBasicMaterial 
+            color="#ffffcc" 
+            transparent 
+            opacity={0.9}
+          />
+        </mesh>
+
+        {/* Center bright core */}
+        <mesh>
+          <sphereGeometry args={[0.15, 16, 12]} />
+          <meshBasicMaterial 
+            color="#ffffaa" 
+            transparent 
+            opacity={1.0}
+          />
+        </mesh>
+
+        {/* Light halo */}
+        <mesh>
+          <sphereGeometry args={[0.4, 16, 12]} />
+          <meshBasicMaterial 
+            color="#ffffaa" 
+            transparent 
+            opacity={isHoveringPolaris ? 0.3 : 0.1}
+          />
+        </mesh>
+
+        {/* Point light for illumination */}
+        <pointLight
+          intensity={isHoveringPolaris ? 4 : 2}
+          distance={20}
+          color="#ffffaa"
+        />
+      </group>
     </>
   )
 }
