@@ -36,14 +36,16 @@ html, body {
   top: 12px;
   right: 12px;
   z-index: 10;
-  background: rgba(20, 20, 24, 0.9);
+  background: rgba(20, 20, 24, 0.95);
   color: #eaeaea;
-  padding: 20px 24px;
+  padding: 0;
   border-radius: 12px;
-  display: grid;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  width: 340px;
+  width: 320px;
+  border: 1px solid rgba(0, 255, 136, 0.2);
 }
 
 .control-panel label {
@@ -91,9 +93,206 @@ html, body {
 
 .checkbox-group {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* New Panel Design */
+.panel-section {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-section:last-child {
+  border-bottom: none;
+}
+
+.environment-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 16px 16px;
+}
+
+.section-header {
+  margin-bottom: 12px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+/* Filter Cards */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-card {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.filter-card:hover {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.3);
+  transform: translateX(2px);
+}
+
+.filter-card.selected {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: rgba(0, 255, 136, 0.5);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.filter-title {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.filter-badge {
+  background: linear-gradient(135deg, #00ff88, #00cc66);
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(0, 255, 136, 0.4);
+  letter-spacing: 0.3px;
+}
+
+.filter-description {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #bbb;
+  border-left: 3px solid rgba(0, 255, 136, 0.5);
+  margin-top: 8px;
+}
+
+/* Checkbox Styling */
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkbox-label {
+  font-weight: 500;
+  font-size: 13px;
+  color: #eaeaea;
+}
+
+.checkbox-description {
+  font-size: 11px;
+  color: #aaa;
+  margin-left: 28px;
+  line-height: 1.3;
+  padding-left: 4px;
+}
+
+/* Background Grid */
+.background-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 6px;
 }
+
+.bg-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bg-option:hover {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.3);
+  transform: translateY(-2px);
+}
+
+.bg-option.selected {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: rgba(0, 255, 136, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+}
+
+.bg-option span {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.bg-preview {
+  width: 32px;
+  height: 20px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Background Previews */
+.space-preview {
+  background: radial-gradient(circle, #1a0033 0%, #000000 100%);
+}
+
+.night-preview {
+  background: linear-gradient(to bottom, #0a0a2e 0%, #0f3460 100%);
+}
+
+.ocean-preview {
+  background: linear-gradient(to bottom, #87CEEB 0%, #0066CC 50%, #D2B48C 100%);
+}
+
+.garden-preview {
+  background: linear-gradient(to bottom, #4682B4 0%, #1A3A1A 20%, #002200 90%, #2F1B14 100%);
+}
+
+.black-preview {
+  background: #000000;
+}
+
+.blue-preview {
+  background: #4682B4;
+}
+
 
 .info-panel {
   position: fixed;

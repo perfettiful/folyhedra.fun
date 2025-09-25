@@ -1,20 +1,25 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import ConstellationNightSky from './ConstellationNightSky'
 
 const BackgroundSelector = ({ background, onPolarisClick }) => {
   const { scene } = useThree()
+  const [currentBackground, setCurrentBackground] = useState(background)
   
   const backgroundTexture = useMemo(() => {
+    return currentBackground
+  }, [currentBackground])
+
+  const createBackgroundTexture = (bgType) => {
     // Handle solid colors first
-    if (['white', 'black', 'blue'].includes(background)) {
+    if (['white', 'black', 'blue'].includes(bgType)) {
       const colorMap = {
         'white': '#ffffff',
         'black': '#000000',
         'blue': '#4682B4'
       }
-      return new THREE.Color(colorMap[background])
+      return new THREE.Color(colorMap[bgType])
     }
 
     // Create canvas for procedural backgrounds
@@ -23,7 +28,7 @@ const BackgroundSelector = ({ background, onPolarisClick }) => {
     canvas.height = 1024
     const ctx = canvas.getContext('2d')
 
-    switch (background) {
+    switch (bgType) {
       case 'night-sky':
         // Use the constellation night sky component instead
         return null
@@ -173,17 +178,29 @@ const BackgroundSelector = ({ background, onPolarisClick }) => {
     texture.magFilter = THREE.LinearFilter
     texture.minFilter = THREE.LinearFilter
     return texture
-  }, [background])
+  }
+
+  // Handle background transitions
+  useEffect(() => {
+    if (background !== currentBackground) {
+      // Simple immediate switch for now
+      setCurrentBackground(background)
+    }
+  }, [background, currentBackground])
+
+  const currentTexture = useMemo(() => {
+    return createBackgroundTexture(currentBackground)
+  }, [currentBackground])
 
   useEffect(() => {
-    if (scene && backgroundTexture) {
-      scene.background = backgroundTexture
+    if (scene && currentTexture) {
+      scene.background = currentTexture
     }
-  }, [scene, backgroundTexture])
+  }, [scene, currentTexture])
 
   return (
     <>
-      {background === 'night-sky' && (
+      {currentBackground === 'night-sky' && (
         <ConstellationNightSky onPolarisClick={onPolarisClick} />
       )}
     </>
