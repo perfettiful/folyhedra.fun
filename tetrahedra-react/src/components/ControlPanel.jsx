@@ -35,6 +35,7 @@ const ControlPanel = ({
           <option value="space">🚀 Deep Space</option>
           <option value="night-sky">🌌 Night Sky</option>
           <option value="ocean">🌊 Ocean</option>
+          <option value="garden">🌿 Garden</option>
           <option value="black">⚫ Black</option>
           <option value="blue">🔵 Blue</option>
         </select>

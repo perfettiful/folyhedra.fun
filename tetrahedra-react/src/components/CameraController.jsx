@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const CameraController = ({ targetDistance, isCloseupMode }) => {
-  const { camera } = useThree()
+  const { camera, gl } = useThree()
   const currentDistance = useRef(15)
   const isAnimating = useRef(false)
 
@@ -31,6 +31,9 @@ const CameraController = ({ targetDistance, isCloseupMode }) => {
       if (Math.abs(newDistance - targetDistance) < 0.1) {
         isAnimating.current = false
         currentDistance.current = targetDistance
+        
+        // Reset any cached positions in camera controls
+        camera.updateProjectionMatrix()
       }
     }
   })

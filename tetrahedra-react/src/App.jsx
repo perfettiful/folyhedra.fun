@@ -129,6 +129,7 @@ function App() {
                 onCameraUpdate={setTargetCameraDistance}
               />
               <OrbitControls
+                key={`orbit-${targetCameraDistance}`}
                 enableDamping
                 dampingFactor={0.06}
                 minDistance={8.0}
@@ -138,6 +139,7 @@ function App() {
                 zoomSpeed={0.5}
                 enablePan={true}
                 panSpeed={0.8}
+                makeDefault
               />
             </>
           ) : (

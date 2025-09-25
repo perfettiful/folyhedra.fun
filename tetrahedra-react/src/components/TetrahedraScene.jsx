@@ -133,7 +133,8 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
   // Add transition effect when tetrahedra change
   React.useEffect(() => {
     setIsTransitioning(true)
-    const timer = setTimeout(() => setIsTransitioning(false), 200)
+    // Slightly longer transition to allow camera to settle
+    const timer = setTimeout(() => setIsTransitioning(false), 300)
     return () => clearTimeout(timer)
   }, [filter, rotationUnique])
 

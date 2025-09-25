@@ -88,40 +88,40 @@ const BackgroundSelector = ({ background, onPolarisClick }) => {
         break
 
       case 'ocean':
-        // Sand and sunny sky gradient
-        const sandSkyGradient = ctx.createLinearGradient(0, 0, 0, 1024)
-        sandSkyGradient.addColorStop(0, '#87CEEB')  // Light sky blue
-        sandSkyGradient.addColorStop(0.3, '#B0E0E6') // Powder blue
-        sandSkyGradient.addColorStop(0.6, '#F0E68C')  // Khaki (sand transition)
-        sandSkyGradient.addColorStop(0.8, '#DEB887')  // Burlywood (sand)
-        sandSkyGradient.addColorStop(1, '#D2B48C')   // Tan (sand)
-        ctx.fillStyle = sandSkyGradient
+        // Smooth sky to ocean to sand gradient
+        const oceanGradient = ctx.createLinearGradient(0, 0, 0, 1024)
+        oceanGradient.addColorStop(0, '#87CEEB')    // Sky blue at very top
+        oceanGradient.addColorStop(0.1, '#4682B4')  // Steel blue
+        oceanGradient.addColorStop(0.5, '#0066CC')  // Bright blue ocean dominates
+        oceanGradient.addColorStop(0.8, '#004499')  // Deeper blue ocean
+        oceanGradient.addColorStop(1, '#D2B48C')    // Tan sand (bottom)
+        ctx.fillStyle = oceanGradient
+        ctx.fillRect(0, 0, 1024, 1024)
+        break
+
+      case 'garden':
+        // Garden with dark green almost to bottom
+        const gardenGradient = ctx.createLinearGradient(0, 0, 0, 1024)
+        gardenGradient.addColorStop(0, '#4682B4')    // Steel blue sky
+        gardenGradient.addColorStop(0.2, '#1A3A1A')  // Very dark forest green
+        gardenGradient.addColorStop(0.7, '#002200')  // Extremely dark green
+        gardenGradient.addColorStop(0.9, '#001100')  // Even darker green
+        gardenGradient.addColorStop(1, '#2F1B14')    // Very dark brown earth (thin strip)
+        ctx.fillStyle = gardenGradient
         ctx.fillRect(0, 0, 1024, 1024)
         
-        // Add sun
-        ctx.fillStyle = '#FFFF00'
-        ctx.beginPath()
-        ctx.arc(800, 150, 60, 0, Math.PI * 2)
-        ctx.fill()
-        
-        // Sun glow
-        const beachSunGlow = ctx.createRadialGradient(800, 150, 60, 800, 150, 120)
-        beachSunGlow.addColorStop(0, 'rgba(255,255,100,0.4)')
-        beachSunGlow.addColorStop(1, 'rgba(255,255,100,0)')
-        ctx.fillStyle = beachSunGlow
-        ctx.beginPath()
-        ctx.arc(800, 150, 120, 0, Math.PI * 2)
-        ctx.fill()
-        
-        // Add fewer, subtle sand dunes instead of water mines
-        ctx.fillStyle = 'rgba(218,165,32,0.3)'
-        for (let i = 0; i < 5; i++) {
+        // Add puffy white clouds like nebula effect
+        for (let i = 0; i < 3; i++) {
           const x = Math.random() * 1024
-          const y = 600 + Math.random() * 300
-          const width = 80 + Math.random() * 120
-          const height = 20 + Math.random() * 40
+          const y = Math.random() * 200 + 20 // More spread in sky area
+          const size = 30 + Math.random() * 50
+          const cloudGradient = ctx.createRadialGradient(x, y, 0, x, y, size)
+          cloudGradient.addColorStop(0, 'rgba(255,255,255,0.6)')
+          cloudGradient.addColorStop(0.5, 'rgba(255,255,255,0.3)')
+          cloudGradient.addColorStop(1, 'rgba(255,255,255,0)')
+          ctx.fillStyle = cloudGradient
           ctx.beginPath()
-          ctx.ellipse(x, y, width, height, 0, 0, Math.PI * 2)
+          ctx.arc(x, y, size, 0, Math.PI * 2)
           ctx.fill()
         }
         break
