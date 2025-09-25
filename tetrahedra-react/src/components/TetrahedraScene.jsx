@@ -5,7 +5,7 @@ import { generateMasks, V, E, canonical, countBits, vertexDegrees, isConnected, 
 import TetrahedronGroup from './TetrahedronGroup'
 import CornerTetrahedron from './CornerTetrahedron'
 
-const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate, selectedTetra, isCloseupMode, onCameraUpdate }) => {
+const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onCountUpdate, selectedTetra, isCloseupMode }) => {
   const groupRef = useRef()
   const platformRef = useRef()
   const gridRef = useRef()
@@ -98,12 +98,6 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
     
     // Update target platform size
     setTargetPlatformSize(optimalSize)
-    
-    // Calculate optimal camera distance based on platform size
-    const optimalCameraDistance = optimalSize * 1.2 + 8 // Scale factor + base distance
-    if (onCameraUpdate) {
-      onCameraUpdate(optimalCameraDistance)
-    }
 
     return masks.map((mask, idx) => {
       const row = Math.floor(idx / cols)

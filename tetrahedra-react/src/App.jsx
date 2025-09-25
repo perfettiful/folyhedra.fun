@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import './App.css'
@@ -9,7 +9,6 @@ import AnimatedCloseupView from './components/AnimatedCloseupView'
 import CloseupInfoPanel from './components/CloseupInfoPanel'
 import BackgroundSelector from './components/BackgroundSelector'
 import RetroTextbox from './components/RetroTextbox'
-import CameraController from './components/CameraController'
 import InspectionToolbar from './components/InspectionToolbar'
 
 function App() {
@@ -24,12 +23,12 @@ function App() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldExit, setShouldExit] = useState(false)
   const [isRetroTextboxOpen, setIsRetroTextboxOpen] = useState(false)
-  const [targetCameraDistance, setTargetCameraDistance] = useState(15)
   const [inspectionControls, setInspectionControls] = useState({
     isAutoRotating: false,
     isWireframe: false
   })
   const rotationCommandRef = useRef(null)
+
 
   const handleSelectTetra = (tetra) => {
     setOriginalPosition(tetra.position)
@@ -114,10 +113,6 @@ function App() {
           
           {!isCloseupMode ? (
             <>
-              <CameraController 
-                targetDistance={targetCameraDistance}
-                isCloseupMode={isCloseupMode}
-              />
               <TetrahedraScene
                 filter={filter}
                 rotationUnique={rotationUnique}
@@ -126,14 +121,12 @@ function App() {
                 onCountUpdate={setTetrahedraCount}
                 selectedTetra={selectedTetra}
                 isCloseupMode={isCloseupMode}
-                onCameraUpdate={setTargetCameraDistance}
               />
               <OrbitControls
-                key={`orbit-${targetCameraDistance}`}
                 enableDamping
                 dampingFactor={0.06}
                 minDistance={8.0}
-                maxDistance={60.0}
+                maxDistance={40.0}
                 target={[0, -0.5, 0]}
                 enableZoom={true}
                 zoomSpeed={0.5}
