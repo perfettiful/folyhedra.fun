@@ -481,108 +481,35 @@ body.polaris-hover {
   text-align: center;
 }
 
-/* Elegant Circular Compass */
+/* Clean Grid-Based D-pad */
 .circular-dpad {
-  position: relative;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, rgba(255,255,255,0.05) 30%, transparent 30%);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 32px 32px 32px;
+  grid-template-rows: 32px 32px 32px;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
 }
 
-.circular-dpad::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(0,255,136,0.1) 0deg,
-    transparent 45deg,
-    rgba(0,255,136,0.1) 90deg,
-    transparent 135deg,
-    rgba(0,255,136,0.1) 180deg,
-    transparent 225deg,
-    rgba(0,255,136,0.1) 270deg,
-    transparent 315deg,
-    rgba(0,255,136,0.1) 360deg
-  );
-  opacity: 0.3;
-  z-index: -1;
-}
-
-/* Sector-based positioning */
-.dpad-north { 
-  position: absolute; 
-  top: 8px; 
-  left: 50%; 
-  transform: translateX(-50%);
-}
-
-.dpad-northeast { 
-  position: absolute; 
-  top: 18px; 
-  right: 18px;
-}
-
-.dpad-east { 
-  position: absolute; 
-  right: 8px; 
-  top: 50%; 
-  transform: translateY(-50%);
-}
-
-.dpad-southeast { 
-  position: absolute; 
-  bottom: 18px; 
-  right: 18px;
-}
-
-.dpad-south { 
-  position: absolute; 
-  bottom: 8px; 
-  left: 50%; 
-  transform: translateX(-50%);
-}
-
-.dpad-southwest { 
-  position: absolute; 
-  bottom: 18px; 
-  left: 18px;
-}
-
-.dpad-west { 
-  position: absolute; 
-  left: 8px; 
-  top: 50%; 
-  transform: translateY(-50%);
-}
-
-.dpad-northwest { 
-  position: absolute; 
-  top: 18px; 
-  left: 18px;
-}
-
-.dpad-center { 
-  position: absolute; 
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%);
-  z-index: 2;
-}
+/* Grid positioning */
+.dpad-northwest { grid-area: 1 / 1; }
+.dpad-north { grid-area: 1 / 2; }
+.dpad-northeast { grid-area: 1 / 3; }
+.dpad-west { grid-area: 2 / 1; }
+.dpad-center { grid-area: 2 / 2; }
+.dpad-east { grid-area: 2 / 3; }
+.dpad-southwest { grid-area: 3 / 1; }
+.dpad-south { grid-area: 3 / 2; }
+.dpad-southeast { grid-area: 3 / 3; }
 
 .dpad-btn {
   background: rgba(20, 20, 24, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #eaeaea;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -590,46 +517,31 @@ body.polaris-hover {
   justify-content: center;
   font-size: 14px;
   font-weight: bold;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   user-select: none;
   backdrop-filter: blur(4px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  outline: none !important;
 }
 
-.dpad-center {
-  font-size: 12px;
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 255, 136, 0.2);
-  border-color: rgba(0, 255, 136, 0.4);
+.dpad-btn:focus,
+.dpad-btn:focus-visible {
+  outline: none !important;
 }
+
 
 .dpad-btn:hover {
   background: rgba(0, 255, 136, 0.3);
   border-color: rgba(0, 255, 136, 0.6);
   box-shadow: 0 4px 16px rgba(0, 255, 136, 0.4);
-}
-
-/* Scale effect only for diagonal buttons */
-.dpad-northeast:hover,
-.dpad-southeast:hover,
-.dpad-southwest:hover,
-.dpad-northwest:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .dpad-btn.active {
   background: rgba(0, 255, 136, 0.5);
   border-color: rgba(0, 255, 136, 0.8);
   box-shadow: 0 2px 12px rgba(0, 255, 136, 0.6);
-}
-
-/* Scale effect only for diagonal buttons when active */
-.dpad-northeast.active,
-.dpad-southeast.active,
-.dpad-southwest.active,
-.dpad-northwest.active {
-  transform: scale(0.9);
+  transform: scale(0.95);
 }
 
 /* Tool Buttons */
