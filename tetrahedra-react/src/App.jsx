@@ -8,7 +8,7 @@ import InfoPanel from './components/InfoPanel'
 import AnimatedCloseupView from './components/AnimatedCloseupView'
 import CloseupInfoPanel from './components/CloseupInfoPanel'
 import BackgroundSelector from './components/BackgroundSelector'
-import PolarisModal from './components/PolarisModal'
+import RetroTextbox from './components/RetroTextbox'
 import CameraController from './components/CameraController'
 import InspectionToolbar from './components/InspectionToolbar'
 
@@ -16,14 +16,14 @@ function App() {
   const [filter, setFilter] = useState('connected_noface')
   const [rotationUnique, setRotationUnique] = useState(true)
   const [edgeStyle, setEdgeStyle] = useState('solid')
-  const [background, setBackground] = useState('night-sky')
+  const [background, setBackground] = useState('space')
   const [selectedTetra, setSelectedTetra] = useState(null)
   const [isCloseupMode, setIsCloseupMode] = useState(false)
   const [tetrahedraCount, setTetrahedraCount] = useState(0)
   const [originalPosition, setOriginalPosition] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldExit, setShouldExit] = useState(false)
-  const [isPolarisModalOpen, setIsPolarisModalOpen] = useState(false)
+  const [isRetroTextboxOpen, setIsRetroTextboxOpen] = useState(false)
   const [targetCameraDistance, setTargetCameraDistance] = useState(15)
   const [inspectionControls, setInspectionControls] = useState({
     isAutoRotating: false,
@@ -109,7 +109,7 @@ function App() {
         >
           <BackgroundSelector 
             background={background} 
-            onPolarisClick={() => setIsPolarisModalOpen(true)}
+            onPolarisClick={() => setIsRetroTextboxOpen(true)}
           />
           
           {!isCloseupMode ? (
@@ -182,9 +182,9 @@ function App() {
         </div>
       )}
       
-      <PolarisModal 
-        isOpen={isPolarisModalOpen}
-        onClose={() => setIsPolarisModalOpen(false)}
+      <RetroTextbox 
+        isOpen={isRetroTextboxOpen}
+        onClose={() => setIsRetroTextboxOpen(false)}
       />
     </div>
   )

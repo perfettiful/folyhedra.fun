@@ -88,25 +88,41 @@ const BackgroundSelector = ({ background, onPolarisClick }) => {
         break
 
       case 'ocean':
-        // Deep ocean gradient
-        const oceanGradient = ctx.createLinearGradient(0, 0, 0, 1024)
-        oceanGradient.addColorStop(0, '#87CEEB')
-        oceanGradient.addColorStop(0.3, '#4682B4')
-        oceanGradient.addColorStop(0.7, '#1E90FF')
-        oceanGradient.addColorStop(1, '#000080')
-        ctx.fillStyle = oceanGradient
+        // Sand and sunny sky gradient
+        const sandSkyGradient = ctx.createLinearGradient(0, 0, 0, 1024)
+        sandSkyGradient.addColorStop(0, '#87CEEB')  // Light sky blue
+        sandSkyGradient.addColorStop(0.3, '#B0E0E6') // Powder blue
+        sandSkyGradient.addColorStop(0.6, '#F0E68C')  // Khaki (sand transition)
+        sandSkyGradient.addColorStop(0.8, '#DEB887')  // Burlywood (sand)
+        sandSkyGradient.addColorStop(1, '#D2B48C')   // Tan (sand)
+        ctx.fillStyle = sandSkyGradient
         ctx.fillRect(0, 0, 1024, 1024)
         
-        // Add wave patterns
-        ctx.strokeStyle = 'rgba(255,255,255,0.2)'
-        ctx.lineWidth = 2
-        for (let y = 200; y < 1000; y += 60) {
+        // Add sun
+        ctx.fillStyle = '#FFFF00'
+        ctx.beginPath()
+        ctx.arc(800, 150, 60, 0, Math.PI * 2)
+        ctx.fill()
+        
+        // Sun glow
+        const beachSunGlow = ctx.createRadialGradient(800, 150, 60, 800, 150, 120)
+        beachSunGlow.addColorStop(0, 'rgba(255,255,100,0.4)')
+        beachSunGlow.addColorStop(1, 'rgba(255,255,100,0)')
+        ctx.fillStyle = beachSunGlow
+        ctx.beginPath()
+        ctx.arc(800, 150, 120, 0, Math.PI * 2)
+        ctx.fill()
+        
+        // Add fewer, subtle sand dunes instead of water mines
+        ctx.fillStyle = 'rgba(218,165,32,0.3)'
+        for (let i = 0; i < 5; i++) {
+          const x = Math.random() * 1024
+          const y = 600 + Math.random() * 300
+          const width = 80 + Math.random() * 120
+          const height = 20 + Math.random() * 40
           ctx.beginPath()
-          ctx.moveTo(0, y)
-          for (let x = 0; x < 1024; x += 30) {
-            ctx.lineTo(x, y + Math.sin(x * 0.05 + y * 0.01) * 12)
-          }
-          ctx.stroke()
+          ctx.ellipse(x, y, width, height, 0, 0, Math.PI * 2)
+          ctx.fill()
         }
         break
 
@@ -139,47 +155,6 @@ const BackgroundSelector = ({ background, onPolarisClick }) => {
         for (let i = 0; i < 500; i++) {
           const x = Math.random() * 1024
           const y = Math.random() * 1024
-          const size = Math.random() * 1
-          ctx.beginPath()
-          ctx.arc(x, y, size, 0, Math.PI * 2)
-          ctx.fill()
-        }
-        break
-
-      case 'aurora':
-        // Aurora borealis
-        const auroraGradient = ctx.createLinearGradient(0, 0, 0, 1024)
-        auroraGradient.addColorStop(0, '#001122')
-        auroraGradient.addColorStop(0.5, '#003344')
-        auroraGradient.addColorStop(1, '#000011')
-        ctx.fillStyle = auroraGradient
-        ctx.fillRect(0, 0, 1024, 1024)
-        
-        // Add aurora waves
-        for (let i = 0; i < 8; i++) {
-          const gradient = ctx.createLinearGradient(0, 200 + i * 100, 0, 300 + i * 100)
-          gradient.addColorStop(0, `rgba(0,255,150,${0.1 + Math.random() * 0.2})`)
-          gradient.addColorStop(0.5, `rgba(100,255,200,${0.2 + Math.random() * 0.3})`)
-          gradient.addColorStop(1, `rgba(0,200,255,${0.1 + Math.random() * 0.2})`)
-          ctx.fillStyle = gradient
-          
-          ctx.beginPath()
-          ctx.moveTo(0, 200 + i * 100)
-          for (let x = 0; x < 1024; x += 20) {
-            const y = 200 + i * 100 + Math.sin(x * 0.02 + i) * 30
-            ctx.lineTo(x, y)
-          }
-          ctx.lineTo(1024, 300 + i * 100)
-          ctx.lineTo(0, 300 + i * 100)
-          ctx.closePath()
-          ctx.fill()
-        }
-        
-        // Add stars
-        ctx.fillStyle = '#ffffff'
-        for (let i = 0; i < 150; i++) {
-          const x = Math.random() * 1024
-          const y = Math.random() * 400
           const size = Math.random() * 1
           ctx.beginPath()
           ctx.arc(x, y, size, 0, Math.PI * 2)

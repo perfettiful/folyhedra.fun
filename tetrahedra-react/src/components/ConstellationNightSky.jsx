@@ -113,15 +113,15 @@ const ConstellationNightSky = ({ onPolarisClick }) => {
   }, [scene, backgroundTexture])
 
   // Twinkling and rotation animation
-  useFrame((state) => {
-    twinkleTime.current += state.clock.elapsedTime * 0.001
+  useFrame((state, delta) => {
+    twinkleTime.current += delta * 0.5 // Slower, consistent twinkling
     
     if (polarisRef.current) {
       // Much slower rotation
       polarisRef.current.rotation.z += 0.002
       
-      // Twinkling opacity
-      const twinkle = 0.7 + Math.sin(twinkleTime.current * 4) * 0.3
+      // Subtle twinkling opacity
+      const twinkle = 0.8 + Math.sin(twinkleTime.current * 2) * 0.15
       polarisRef.current.children.forEach(child => {
         if (child.material) {
           child.material.opacity = isHoveringPolaris ? 1.0 : twinkle
