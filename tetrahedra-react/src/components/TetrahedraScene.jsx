@@ -87,24 +87,9 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
 
   const tetrahedra = useMemo(() => {
     const masks = generateMasks(filter, rotationUnique)
-    const cols = Math.ceil(Math.sqrt(masks.length))
-    const spacing = 2.5
     
-    // Calculate optimal platform size based on layout
-    const rows = Math.ceil(masks.length / cols)
-    const layoutWidth = (cols - 1) * spacing + 4 // Add more margin
-    const layoutDepth = (rows - 1) * spacing + 4 // Add more margin
-    const optimalSize = Math.max(layoutWidth, layoutDepth, 10) // Minimum size of 10
-    
-    // Update target platform size
-    setTargetPlatformSize(optimalSize)
-
-    return masks.map((mask, idx) => {
-      const row = Math.floor(idx / cols)
-      const col = idx % cols
-      const x = (col - (cols - 1) / 2) * spacing
-      const z = (row - Math.ceil(masks.length / cols - 1) / 2) * spacing
-
+    // Create structure data with analysis
+    const structures = masks.map((mask) => {
       const userData = {
         mask,
         canonical: canonical(mask),
@@ -113,12 +98,61 @@ const TetrahedraScene = ({ filter, rotationUnique, edgeStyle, onSelectTetra, onC
         degrees: vertexDegrees(mask),
         connected: isConnected(mask),
         hasFace: hasFullFace(mask),
-        idx,
       }
       userData.label = labelFor(userData)
+      return userData
+    })
+    
+    // Sort structures for better organization
+    structures.sort((a, b) => {
+      // Primary sort: by edge count (least to most)
+      if (a.edgeCount !== b.edgeCount) {
+        return a.edgeCount - b.edgeCount
+      }
+      
+      // Secondary sort: structures with faces come after those without
+      if (a.hasFace !== b.hasFace) {
+        return a.hasFace ? 1 : -1
+      }
+      
+      // Tertiary sort: by degree sequence (more "spread out" degrees first)
+      const aDegreeSpread = Math.max(...a.degrees) - Math.min(...a.degrees)
+      const bDegreeSpread = Math.max(...b.degrees) - Math.min(...b.degrees)
+      if (aDegreeSpread !== bDegreeSpread) {
+        return bDegreeSpread - aDegreeSpread
+      }
+      
+      // Quaternary sort: by orbit size (more symmetric first)
+      if (a.orbitSize !== b.orbitSize) {
+        return a.orbitSize - b.orbitSize
+      }
+      
+      // Final sort: by mask value for deterministic ordering
+      return a.mask - b.mask
+    })
+    
+    // Now calculate layout positions
+    const cols = Math.ceil(Math.sqrt(structures.length))
+    const spacing = 2.5
+    
+    // Calculate optimal platform size based on layout
+    const rows = Math.ceil(structures.length / cols)
+    const layoutWidth = (cols - 1) * spacing + 4 // Add more margin
+    const layoutDepth = (rows - 1) * spacing + 4 // Add more margin
+    const optimalSize = Math.max(layoutWidth, layoutDepth, 10) // Minimum size of 10
+    
+    // Update target platform size
+    setTargetPlatformSize(optimalSize)
+
+    return structures.map((userData, idx) => {
+      const row = Math.floor(idx / cols)
+      const col = idx % cols
+      const x = (col - (cols - 1) / 2) * spacing
+      const z = (row - Math.ceil(structures.length / cols - 1) / 2) * spacing
 
       return {
         ...userData,
+        idx,
         position: [x, -0.35, z], // Position ABOVE platform so they just touch it
       }
     })
