@@ -23,6 +23,9 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./incomplete-tetrahedra
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,14 +38,10 @@ jobs:
           cache-dependency-path: './incomplete-tetrahedra/package-lock.json'
           
       - name: Install dependencies
-        run: |
-          cd incomplete-tetrahedra
-          npm ci
+        run: npm ci
           
       - name: Build
-        run: |
-          cd incomplete-tetrahedra
-          npm run build
+        run: npm run build
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
