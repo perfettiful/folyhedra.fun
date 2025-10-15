@@ -1,13 +1,15 @@
 <h1 align="center" style="font-size: 3em;">
-    🔮 Folyhedra.Fun 📐
+    🔮 Polyhedra Fun 📐
 </h1>
 
 <p align="center">
-    <strong>🌐 Live Demo: <a href="https://folyhedra.fun">folyhedra.fun</a></strong>
+    <strong>🌐 Live Demo: <a href="https://folyhedra.fun" target="_blank">folyhedra.fun</a></strong>
 </p>
 
 <p align="center">
-    <img src="./public/Screenshot1.png" alt="Polyhedra Fun Screenshot" width="600">
+    <a href="https://folyhedra.fun" target="_blank">
+        <img src="./public/Screenshot1.png" alt="Polyhedra Fun Screenshot" width="600">
+    </a>
 </p>
 
 <span align="center">
