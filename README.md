@@ -208,12 +208,6 @@ src/
 - **VR/AR Support**: Immersive 3D exploration
 - **Export Functionality**: 3D model downloads (STL, OBJ formats)
 
-### Research Directions
-- **Archimedean Solids**: Semi-regular polyhedra exploration
-- **Crystallographic Applications**: Real-world material structures
-- **Network Theory**: Graph connectivity analysis
-- **Machine Learning**: Pattern recognition in geometric structures
-
 ## Contributing
 
 We welcome contributions from mathematicians, developers, and educators! Here's how you can help:
@@ -235,13 +229,6 @@ We welcome contributions from mathematicians, developers, and educators! Here's 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- **Professor [Name]** - Discrete Mathematics course inspiration
-- **Three.js Community** - Excellent 3D graphics framework
-- **React Three Fiber** - Seamless React-Three.js integration
-- **Mathematical Community** - Ongoing research in combinatorial geometry
 
 ## Contact & Connect
 
